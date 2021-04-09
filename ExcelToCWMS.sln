@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hec.Cwms", "Hec.Cwms\Hec.Cwms.csproj", "{9DA6C47D-83AD-4D6B-B453-A2CF1C7C1E71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelToCWMS", "ExcelToCWMS\ExcelToCWMS.csproj", "{B6FCA2E9-5887-4702-AB30-394BD2183C5D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9DA6C47D-83AD-4D6B-B453-A2CF1C7C1E71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DA6C47D-83AD-4D6B-B453-A2CF1C7C1E71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DA6C47D-83AD-4D6B-B453-A2CF1C7C1E71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DA6C47D-83AD-4D6B-B453-A2CF1C7C1E71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6FCA2E9-5887-4702-AB30-394BD2183C5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6FCA2E9-5887-4702-AB30-394BD2183C5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6FCA2E9-5887-4702-AB30-394BD2183C5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6FCA2E9-5887-4702-AB30-394BD2183C5D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA0DD938-23F2-4DD3-B977-00E7DC1AE2D1}
+	EndGlobalSection
+EndGlobal
