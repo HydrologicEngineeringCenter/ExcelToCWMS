@@ -21,13 +21,19 @@ namespace ExcelToCWMS
 
       TimeSeries ts = db.GetTimeSeries(id,DateTime.Now.AddHours(-56),DateTime.Now);
       ts.WriteToConsole();
-      // Read TS from excel.
-      //MVN_ExcelReader er = new MVN_ExcelReader(); // details about their 
-      // 
-      // db.SaveTimeSeries(ts)
+            // Read TS from excel.
+            //MVN_ExcelReader er = new MVN_ExcelReader(); // details about their 
+            // 
+            // db.SaveTimeSeries(ts)
+
+            // This method shoudl return for each tsid in sheet return dates values for time window
+            TimeSeries[] myTSarray; //= ReadExcel("myexcel.xlsx", sheetname, startTime, endTime)
+      // for TimeSeries
 
 
 
     }
-  }
+
+       
+    }
 }
