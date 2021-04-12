@@ -40,8 +40,9 @@ namespace Hec.Cwms
       dict.TryGetValue("sid", out string sid);
       dict.TryGetValue("host", out string host);
       dict.TryGetValue("port", out string port);
-        //Console.Write("password:");
-       string pass = "";// from console.
+      Console.Write("password:");
+      string pass = Console.ReadLine();
+      
 
       var o = new Oracle(user, pass,host,sid, port);
       
