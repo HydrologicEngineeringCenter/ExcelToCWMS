@@ -39,7 +39,7 @@ namespace ExcelToCWMS
             //Oracle o = Oracle.Connect(dbconfig);
 
             //CwmsDatabase db = new CwmsDatabase(o);
-            // db.SetTimeZone("GMT");
+           // db.SetTimeZone("GMT");
 
             //db.SetOffice("NWDM");
             //var id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
@@ -49,17 +49,8 @@ namespace ExcelToCWMS
 
             //db.SaveTimeSeries(ts)
 
-            // This method shoudl return for each tsid in sheet return dates values for time window
-            //= ReadExcel("myexcel.xlsx", sheetname, startTime, endTime)
-            // for TimeSeries
-            try
-            {//If excel file is open ClosedXML throws exception
-                ClosedXML c = new ClosedXML(filename);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            //ClosedXML throws exception when excel wb is open
+            ClosedXML c = new ClosedXML(filename);
             DataTable dt = c.GetDataTable(sheetName);
             Console.WriteLine();
             Dictionary<string, string[]> dictString = ProcessDataTable.CreateRateDictionary(dt);
