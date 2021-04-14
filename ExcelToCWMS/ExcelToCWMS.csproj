@@ -91,6 +91,10 @@
       <Project>{9da6c47d-83ad-4d6b-b453-a2cf1c7c1e71}</Project>
       <Name>Hec.Cwms</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hec.Data\Hec.Data.csproj">
+      <Project>{63f83db6-7368-47f8-8a97-854617692fb0}</Project>
+      <Name>Hec.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">

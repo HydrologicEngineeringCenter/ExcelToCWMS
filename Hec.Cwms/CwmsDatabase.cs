@@ -1,6 +1,7 @@
 ﻿using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using System;
+using Hec.Data;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;

@@ -65,12 +65,16 @@
     <Compile Include="CwmsDatabase.cs" />
     <Compile Include="Oracle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TimeSeriesValue.cs" />
-    <Compile Include="TimeSeries.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Hec.Data\Hec.Data.csproj">
+      <Project>{63f83db6-7368-47f8-8a97-854617692fb0}</Project>
+      <Name>Hec.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
