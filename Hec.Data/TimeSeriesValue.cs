@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hec.Data
 {
-  struct TimeSeriesValue {
+  public struct TimeSeriesValue {
 
     public TimeSeriesValue(double? value, int quality)
     {

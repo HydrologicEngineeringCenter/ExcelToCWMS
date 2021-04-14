@@ -53,7 +53,7 @@ namespace Hec.Cwms
     }
 
 
-    public TimeSeries GetTimeSeries(string tsid, DateTime t1, DateTime t2)
+    public ITimeSeries GetTimeSeries(string tsid, DateTime t1, DateTime t2)
     {
       TimeSeries rval = new TimeSeries();
       //01-JAN-1980 1530
