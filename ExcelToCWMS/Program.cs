@@ -1,4 +1,5 @@
 ﻿using Hec.Cwms;
+using Hec.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,9 +15,9 @@ namespace ExcelToCWMS
     {
             //----------------------------
             //inputs:
-            if (args.Length != 4)
+            if (args.Length != 5)
             {
-                Console.WriteLine("Usage: ExceltoCWMS.exe db.config input.xlsx Excel_sheetname startTime [endTime]");
+                Console.WriteLine("Usage: ExceltoCWMS.exe db.config input.xlsx Excel_sheetname startTime lookBackDays");
                 Console.WriteLine();
                 Console.WriteLine("Read time series data from formatted excel sheet and stuff in Oracle");
                 Console.WriteLine();
@@ -32,6 +33,9 @@ namespace ExcelToCWMS
             String filename = args[1];
             String sheetName = args[2];
             DateTime startTime = DateTime.Parse(args[3]);
+            int lookBackDays = int.Parse(args[4]);
+            DateTime backDate= startTime.AddDays(-lookBackDays);
+            Console.WriteLine(backDate);
 
 
 
@@ -39,7 +43,7 @@ namespace ExcelToCWMS
             //Oracle o = Oracle.Connect(dbconfig);
 
             //CwmsDatabase db = new CwmsDatabase(o);
-           // db.SetTimeZone("GMT");
+            // db.SetTimeZone("GMT");
 
             //db.SetOffice("NWDM");
             //var id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
