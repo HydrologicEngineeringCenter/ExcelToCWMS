@@ -17,7 +17,7 @@ namespace ExcelToCWMS
             //inputs:
             if (args.Length != 5)
             {
-                Console.WriteLine("Usage: ExceltoCWMS.exe db.config input.xlsx Excel_sheetname startTime lookBackDays");
+                Console.WriteLine("Usage: ExceltoCWMS.exe db.config input.xlsx Excel_sheetname Date lookBackDays");
                 Console.WriteLine();
                 Console.WriteLine("Read time series data from formatted excel sheet and stuff in Oracle");
                 Console.WriteLine();
@@ -32,10 +32,10 @@ namespace ExcelToCWMS
             String dbconfig = args[0];
             String filename = args[1];
             String sheetName = args[2];
-            DateTime startTime = DateTime.Parse(args[3]);
+            DateTime endTime = DateTime.Parse(args[3]);
             int lookBackDays = int.Parse(args[4]);
-            DateTime backDate= startTime.AddDays(-lookBackDays);
-            Console.WriteLine(backDate);
+            DateTime startTime= endTime.AddDays(-lookBackDays);
+            Console.WriteLine(startTime);
 
 
 
@@ -54,7 +54,7 @@ namespace ExcelToCWMS
             //db.SaveTimeSeries(ts)
 
             //ClosedXML throws exception when excel wb is open
-            TimeSeries[] tsArrays =ProcessDataTable.getTimeSeries(filename, sheetName, startTime, backDate);
+            TimeSeries[] tsArrays =ProcessDataTable.getTimeSeries(filename, sheetName, endTime, startTime);
             
 
             Console.Read();

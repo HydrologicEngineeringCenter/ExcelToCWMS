@@ -8,81 +8,46 @@ using System.Threading.Tasks;
 
 namespace ExcelToCWMS
 {
-    class ProcessDataTable
-    {
-        //public TimeSeries[] ReturnTimeSeries( )
-
-        public static Dictionary<string, string[]> CreateRateDictionary(DataTable dt)
-        {
-            Dictionary<string, string[]> tsdict = new Dictionary<string, string[]>();
-            for (int i = 0; i < dt.Columns.Count; i++)
-            {
-                DataColumn dataColumn = dt.Columns[i];
-                string header = dataColumn.ColumnName.ToString();
-
-                string[] vs = dt.AsEnumerable().Select(r => r.Field<string>(header)).ToArray();
-                double[] vd = new double[vs.Length];
-
-
-                tsdict.Add(header, vs);
-
-            }
-            return tsdict;
-        }
-
-
-        public static void PrintStringDict(Dictionary<string, string[]> dict)
-        {
-            foreach (var pair in dict)
-            {
-                Console.WriteLine("{0}:", pair.Key);
-                foreach (string s in pair.Value)
-                {
-                    Console.WriteLine(s);
-                }
-                Console.WriteLine();
-            }
-        }
-
-        internal static TimeSeries[] getTimeSeries(string filename, string sheetName, DateTime startTime, DateTime backDate)
+    public class ProcessDataTable
+    {     
+           public static TimeSeries[] GetTimeSeriesFromExcel(string filename, string sheetName, DateTime startTime, DateTime endTime)
         {
             ClosedXML c = new ClosedXML(filename);
             DataTable dt = c.GetDataTable(sheetName);
-            Console.WriteLine();
-            Dictionary<string, string[]> dictString = ProcessDataTable.CreateRateDictionary(dt);
-            ProcessDataTable.PrintStringDict(dictString);
-
-            //for each ts in dict create a new TimeSeries an add data
-            TimeSeries[] retval = new TimeSeries[dictString.Count - 1];
-            int mytscounter = 0;
-            foreach (KeyValuePair<string, string[]> entry in dictString)
+            //List <String> tsids = new List<String>();
+            Dictionary<string, TimeSeries> tsDict = new Dictionary<string, TimeSeries>();
+            foreach (DataColumn dc in dt.Columns)
             {
-                if (!entry.Key.Equals("Date"))
-                {
-                    TimeSeries myts = new TimeSeries();
-                    for (int j = 0; j < entry.Value.Length; j++)
-                    {
-                        try
-                        {
-                            Console.WriteLine("Writing TS Data for " + entry.Key);
-                            myts.Add(DateTime.Parse(dictString["Date"][j]), Double.Parse(entry.Value[j]), 0);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.Message);
-                            Console.Read();
-
-                        }
-                        
-                    }
-                    retval[mytscounter] = myts;
-                    mytscounter += 1;
-                    //db.SaveTimeSeries(myts)
-
-                }
+                if (dc.ColumnName.ToLower() == "date") continue;
+                tsDict.Add(dc.ColumnName, new TimeSeries(dc.ColumnName));
 
             }
-            return retval;
+            //https://www.c-sharpcorner.com/blogs/filter-datetime-from-datatable-in-c-sharp1
+            
+            foreach (DataRow row in dt.Rows)
+            {
+                if (!DateTime.TryParse(row[0].ToString(), out DateTime t))
+                {
+                    throw new Exception("Could not date " + row[0].ToString() + "to DateTime ");
+                }
+                if (!(t >= startTime && t <= endTime))
+                {
+                    continue;
+                }              
+                foreach (string tsid in tsDict.Keys)
+                {
+
+                    string value = row.Field<string>(tsid);
+                    if (!double.TryParse(value, out double dval))
+                    {
+                        throw new Exception("Could not convert " + value + "to double ");
+                    }
+                    tsDict[tsid].Add(t, dval);
+                }
+                
+            }                  
+            return tsDict.Values.ToArray();
+
         }
     }
 }

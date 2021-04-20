@@ -55,7 +55,7 @@ namespace Hec.Cwms
 
     public ITimeSeries GetTimeSeries(string tsid, DateTime t1, DateTime t2)
     {
-      TimeSeries rval = new TimeSeries();
+      TimeSeries rval = new TimeSeries(tsid);
       //01-JAN-1980 1530
       string fmt = "MM-MMM-yyyy HHmm";
       string start_time = t1.ToString(fmt);
