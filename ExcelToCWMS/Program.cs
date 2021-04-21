@@ -54,7 +54,7 @@ namespace ExcelToCWMS
             //db.SaveTimeSeries(ts)
 
             //ClosedXML throws exception when excel wb is open
-            TimeSeries[] tsArrays =ProcessDataTable.getTimeSeries(filename, sheetName, endTime, startTime);
+            TimeSeries[] tsArrays =ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, endTime, startTime);
             
 
             Console.Read();
