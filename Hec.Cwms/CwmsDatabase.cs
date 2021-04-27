@@ -141,5 +141,104 @@ namespace Hec.Cwms
       return rval;
 
     }
-  }
+
+        public ITimeSeries SetTimeSeries(TimeSeries ts)
+        {
+
+            //TimeSeries rval = new TimeSeries(tsid);
+            //01 - JAN - 1980 1530
+            string fmt = "MM-MMM-yyyy HHmm";
+            string start_time = ts.getTSStartTime().ToString(fmt);
+            string end_time = ts.getTSSEndTime().ToString(fmt);
+            string units = LookupUnits(ts.TSID);
+            OracleConnection conn = oracle.GetConnection();
+            OracleCommand cmd = new OracleCommand();
+            cmd.Connection = conn;
+            try
+            {
+                conn.Open();
+            }
+            catch (OracleException e)
+            {
+                Console.Out.WriteLine(e.Message);
+            }
+
+            //get TS_CODE, units, inteval,
+            //Store_Ts(P_Cwms_Ts_Id      In    Varchar2,
+            //P_Units   In    Varchar2,
+            //P_Times   In    Number_Array,
+            //P_Values      In    Double_Array,
+            //P_Qualities   In    Number_Array,
+            //P_Store_Rule      In    Varchar2,
+            //P_Override_Prot   In    Varchar2 Default 'F',
+            //P_Version_Date    In    Date,
+            //P_Office_Id   In    Varchar2 Default Null,
+            //P_Create_As_Lrts      In    Varchar2 Default 'F')
+
+           cmd.CommandText =
+          "begin " +
+          "  cwms_ts.Store_Ts( " +
+          "    :P_Cwms_Ts_Id, " +
+          "    :P_Units, " +
+          "    :P_Units, " +
+          "    to_date(:start_time, 'dd-mon-yyyy hh24mi'), " +
+          "    to_date(:end_time,   'dd-mon-yyyy hh24mi'), " +
+          "    :P_Store_Rule,  " +
+          "    :P_Override_Prot,  " +
+          "    :P_Version_Date,  " +
+          "    :P_Office_Id,  " +
+          "    :P_Create_As_Lrts,  " +
+          
+          "    'UTC');" +
+          "end;";
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Add(
+                new OracleParameter(
+                    "P_Cwms_Ts_Id",
+                    OracleDbType.Varchar2,
+                    183,
+                    ts.TSID,
+                    ParameterDirection.Input));
+            cmd.Parameters.Add(
+                new OracleParameter(
+                    "P_Units",
+                    OracleDbType.Varchar2,
+                    16,
+                    units,
+                    ParameterDirection.Input));
+            cmd.Parameters.Add(
+                new OracleParameter(
+                    "P_Times",
+                    OracleDbType.,
+                    16,
+                    start_time,
+                    ParameterDirection.Input));
+            cmd.Parameters.Add(
+                new OracleParameter(
+                    "end_time",
+                    OracleDbType.Varchar2,
+                    16,
+                    end_time,
+                    ParameterDirection.Input));
+            cmd.ExecuteNonQuery();
+            ts_cur = (OracleRefCursor)cmd.Parameters["ts_cur"].Value;
+            var dr = ts_cur.GetDataReader();
+
+            while (dr.Read())
+            {
+                DateTime date_time = dr.GetOracleDate(0).Value;
+                double? value = dr.IsDBNull(1) ? (double?)null : dr.GetDouble(1);
+                int quality = (int)dr.GetDecimal(2);
+
+                rval.Add(date_time, value, quality);
+            }
+            ts_cur.Dispose();
+            cmd.Dispose();
+            conn.Close();
+            conn.Dispose();
+            return rval;
+
+        }
+    }
+
 }

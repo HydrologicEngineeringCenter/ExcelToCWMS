@@ -45,5 +45,13 @@ namespace Hec.Data
                 Console.WriteLine("{0:dd-MMM-yyyy HHmm}{1,10:f3}{2,8:d}", item.Key, item.Value.Value, item.Value.Quality);
             }
         }
+        public DateTime getTSStartTime()
+        {
+            return data.Keys.FirstOrDefault();
+        }
+        public DateTime getTSSEndTime()
+        {
+            return data.Keys.LastOrDefault();
+        }
     }
 }

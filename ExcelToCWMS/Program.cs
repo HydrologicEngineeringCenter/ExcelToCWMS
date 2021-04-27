@@ -43,7 +43,7 @@ namespace ExcelToCWMS
             //Oracle o = Oracle.Connect(dbconfig);
 
             //CwmsDatabase db = new CwmsDatabase(o);
-            // db.SetTimeZone("GMT");
+            //db.SetTimeZone("GMT");
 
             //db.SetOffice("NWDM");
             //var id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
@@ -55,6 +55,11 @@ namespace ExcelToCWMS
 
             //ClosedXML throws exception when excel wb is open
             TimeSeries[] tsArrays =ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, endTime, startTime);
+            foreach (TimeSeries ts in tsArrays)
+             {
+              
+
+            }
             
 
             Console.Read();

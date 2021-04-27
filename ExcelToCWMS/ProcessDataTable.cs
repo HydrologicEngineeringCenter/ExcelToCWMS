@@ -28,7 +28,7 @@ namespace ExcelToCWMS
             {
                 if (!DateTime.TryParse(row[0].ToString(), out DateTime t))
                 {
-                    throw new Exception("Could not date " + row[0].ToString() + "to DateTime ");
+                    throw new Exception("Could not convert date " + row[0].ToString() + "to DateTime ");
                 }
                 if (!(t >= startTime && t <= endTime))
                 {
