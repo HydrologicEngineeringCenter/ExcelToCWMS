@@ -192,22 +192,28 @@ namespace Hec.Cwms
       //        + " :p_override_prot IN VARCHAR2 DEFAULT 'F', "
       //      + " p_version_date IN DATE DEFAULT cwms_util.non_versioned, "
       //     + " p_office_id IN VARCHAR2 DEFAULT NULL)";
+      Console.WriteLine(sql);
       OracleConnection conn = oracle.GetConnection();
       conn.InfoMessage += Conn_InfoMessage;
+        
       OracleCommand cmd = new OracleCommand(sql,conn);
 
       cmd.Parameters.Add("p_cwms_ts_id", ts.TSID);
       cmd.Parameters.Add("p_units", ts.Units);
 
       var op = new OracleParameter("p_times", ts.TimesAsJavaMilliSeconds());
+      //op.OracleDbType = OracleDbType.Long;
+      //op.Size = ts.TimesAsJavaMilliSeconds().Length;
       op.CollectionType = OracleCollectionType.PLSQLAssociativeArray;
       cmd.Parameters.Add(op);
 
       op = new OracleParameter("p_values", ts.Values);
+      op.OracleDbType = OracleDbType.BinaryDouble;
       op.CollectionType = OracleCollectionType.PLSQLAssociativeArray;
       cmd.Parameters.Add(op);
-
+      
       op = new OracleParameter("p_qualities", ts.Qualities);
+      
       op.CollectionType = OracleCollectionType.PLSQLAssociativeArray;
       cmd.Parameters.Add(op);
 
