@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hec.Cwms
+namespace Hec.Data
 {
-  struct TimeSeriesValue {
+  public struct TimeSeriesValue {
 
     public TimeSeriesValue(double? value, int quality)
     {
