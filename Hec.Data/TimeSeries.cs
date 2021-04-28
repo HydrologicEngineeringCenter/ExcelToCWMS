@@ -14,7 +14,58 @@ namespace Hec.Data
             set 
             { _tsid = value;} 
         }
-        private string _tsid;
+    public string Units { get; set; }
+
+    public double[] Values
+    {
+      get
+      {
+        var rval = new List<double>();
+        foreach (var item in data)
+        {
+          rval.Add(item.Value.Value.Value);
+        }
+        return rval.ToArray();
+      }
+    }
+    public int[] Qualities
+    {
+      get
+      {
+        var rval = new List<int>();
+        foreach (var item in data)
+        {
+          rval.Add(item.Value.Quality);
+        }
+        return rval.ToArray();
+      }
+    }
+    public long[] TimesAsJavaMilliSeconds()
+    {
+        var rval = new List<long>();
+        foreach (var item in data)
+        {
+          rval.Add(ToMillisecondsSinceUnixEpoch(item.Key));
+        }
+        return rval.ToArray();
+    }
+
+    public static DateTime UnixEpoch()
+    {
+      return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+    }
+
+    /// <summary>
+    /// https://stackoverflow.com/questions/50485294/pass-integer-array-to-oracle-procedure-by-c-sharp
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    private static long ToMillisecondsSinceUnixEpoch(DateTime dateTime)
+    {
+      return (long)(dateTime - UnixEpoch()).TotalMilliseconds;
+    }
+
+    private string _tsid;
         //SortedList is faster than SortedDictionary if inputing data in sorted order
         //https://stackoverflow.com/questions/1376965/when-to-use-a-sortedlisttkey-tvalue-over-a-sorteddictionarytkey-tvalue
         private SortedList<DateTime, TimeSeriesValue> data = new SortedList<DateTime, TimeSeriesValue>();
@@ -53,5 +104,6 @@ namespace Hec.Data
         {
             return data.Keys.LastOrDefault();
         }
-    }
+   
+  }
 }

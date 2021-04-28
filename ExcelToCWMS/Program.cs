@@ -13,9 +13,12 @@ namespace ExcelToCWMS
   {
     static void Main(string[] args)
     {
-            //----------------------------
-            //inputs:
-            if (args.Length != 5)
+      //----------------------------
+      //inputs:
+
+      TestSave(@"C:\utils\db\hec-3.2.2-MRR.txt");
+
+      if (args.Length != 5)
             {
                 Console.WriteLine("Usage: ExceltoCWMS.exe db.config input.xlsx Excel_sheetname Date lookBackDays");
                 Console.WriteLine();
@@ -37,7 +40,7 @@ namespace ExcelToCWMS
             DateTime startTime= endTime.AddDays(-lookBackDays);
             Console.WriteLine(startTime);
 
-
+      
 
 
             //Oracle o = Oracle.Connect(dbconfig);
@@ -65,8 +68,24 @@ namespace ExcelToCWMS
             Console.Read();
             
         }
-       
 
+    private static void TestSave(string dbconfig)
+    {
+      string id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
+      TimeSeries ts = new TimeSeries(id);
+      ts.Add(new DateTime(2000, 1, 1), 123, 0);
+      ts.Add(new DateTime(2000, 1, 2), 456, 1);
+
+      Oracle o = Oracle.Connect(dbconfig);
+      CwmsDatabase db = new CwmsDatabase(o);
+     // db.SetTimeZone("GMT");
+      db.SetOffice("NWDM");
+
+      var ts2 = db.GetTimeSeries(id, DateTime.Now.AddDays(-2), DateTime.Now);
+      ts2.WriteToConsole();
+
+      db.SaveTimeSeries(ts);
     }
+  }
     
 }
