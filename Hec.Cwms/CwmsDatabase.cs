@@ -182,31 +182,38 @@ namespace Hec.Cwms
     p_version_date    IN DATE DEFAULT cwms_util.non_versioned,
     p_office_id       IN VARCHAR2 DEFAULT NULL);
    IS*/
-      string sql = "begin store_ts ( "
+      string sql = "BEGIN cwms_ts.store_ts ( "
       + " :p_cwms_ts_id, "
       + " :p_units, "
       + " :p_times, "
       + " :p_values, "
       + " :p_qualities, "
-      + " :p_store_rule)  end;";
+      + " :p_store_rule);  END;";
       //        + " :p_override_prot IN VARCHAR2 DEFAULT 'F', "
       //      + " p_version_date IN DATE DEFAULT cwms_util.non_versioned, "
       //     + " p_office_id IN VARCHAR2 DEFAULT NULL)";
+      Console.WriteLine(sql);
       OracleConnection conn = oracle.GetConnection();
-      OracleCommand cmd = new OracleCommand(sql);
+      conn.InfoMessage += Conn_InfoMessage;
+        
+      OracleCommand cmd = new OracleCommand(sql,conn);
 
       cmd.Parameters.Add("p_cwms_ts_id", ts.TSID);
       cmd.Parameters.Add("p_units", ts.Units);
 
       var op = new OracleParameter("p_times", ts.TimesAsJavaMilliSeconds());
+      //op.OracleDbType = OracleDbType.Long;
+      //op.Size = ts.TimesAsJavaMilliSeconds().Length;
       op.CollectionType = OracleCollectionType.PLSQLAssociativeArray;
       cmd.Parameters.Add(op);
 
       op = new OracleParameter("p_values", ts.Values);
+      op.OracleDbType = OracleDbType.BinaryDouble;
       op.CollectionType = OracleCollectionType.PLSQLAssociativeArray;
       cmd.Parameters.Add(op);
-
+      
       op = new OracleParameter("p_qualities", ts.Qualities);
+      
       op.CollectionType = OracleCollectionType.PLSQLAssociativeArray;
       cmd.Parameters.Add(op);
 
@@ -222,6 +229,11 @@ namespace Hec.Cwms
         Console.Out.WriteLine(e.Message);
       }
 
+    }
+
+    private void Conn_InfoMessage(object sender, OracleInfoMessageEventArgs eventArgs)
+    {
+      Console.WriteLine(eventArgs.Message);
     }
     //public ITimeSeries SetTimeSeries(TimeSeries ts)
     //{

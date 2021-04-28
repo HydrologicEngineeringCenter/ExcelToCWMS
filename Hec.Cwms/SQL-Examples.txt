@@ -1,0 +1,18 @@
+﻿--exec cwms_env.set_session_office_id('NAB');
+--select cwms_util.user_office_id from dual;
+--select * from cwms_20.av_tsv FETCH FIRST 5 ROWS ONLY;
+select * from cwms_20.av_tsv where TS_CODE =17449030;
+--select distinct db_office_id from cwms_v_ts_id;
+
+--select * from cwms_v_ts_id fetch first 100 rows only;
+select DB_OFFICE_ID, CWMS_TS_ID,UNIT_ID,TS_CODE from cwms_v_ts_id where CWMS_TS_ID = 'ABSD.Precip.Inst.15Minutes.0.Raw-LRGS';
+select DB_OFFICE_ID, CWMS_TS_ID,UNIT_ID from cwms_v_ts_id where CWMS_TS_ID = 'ABSD.Precip.Inst.15Minutes.0.Raw-LRGS' and DB_OFFICE_ID='NWDM';
+
+select DB_OFFICE_ID, CWMS_TS_ID,UNIT_ID from cwms_v_ts_id where CWMS_TS_ID = 'ABSD.Precip.Inst.15Minutes.0.Raw-LRGS' AND DB_OFFICE_ID = 'NWDM' FETCH FIRST 1 ROWS ONLY;
+
+
+---  test
+-- 7264030 'ABSD.Precip.Inst.15Minutes.0.Raw-LRGS';
+select Date_time,value,quality_code, from cwms_20.av_tsv where TS_CODE =7264030 order by start_Date asc  fetch first 30 rows only;
+
+--select min(Date_time),max(date_time)from cwms_20.av_tsv where TS_CODE =7264030
