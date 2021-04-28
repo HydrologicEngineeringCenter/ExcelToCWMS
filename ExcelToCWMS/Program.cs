@@ -75,6 +75,7 @@ namespace ExcelToCWMS
       TimeSeries ts = new TimeSeries(id);
       ts.Add(new DateTime(2000, 1, 1), 123, 0);
       ts.Add(new DateTime(2000, 1, 2), 456, 1);
+      ts.Units = "mm";
 
       Oracle o = Oracle.Connect(dbconfig);
       CwmsDatabase db = new CwmsDatabase(o);
