@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ITimeSeries.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeSeries.cs" />
     <Compile Include="TimeSeriesValue.cs" />

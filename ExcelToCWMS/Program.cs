@@ -16,9 +16,7 @@ namespace ExcelToCWMS
       //----------------------------
       //inputs:
 
-      TestSave(@"C:\utils\db\hec-3.2.2-MRR.txt");
-
-      if (args.Length != 5)
+       if (args.Length != 5)
             {
                 Console.WriteLine("Usage: ExceltoCWMS.exe db.config input.xlsx Excel_sheetname Date lookBackDays");
                 Console.WriteLine();
@@ -40,33 +38,24 @@ namespace ExcelToCWMS
             DateTime startTime= endTime.AddDays(-lookBackDays);
             Console.WriteLine(startTime);
 
-      
 
 
-            //Oracle o = Oracle.Connect(dbconfig);
 
-            //CwmsDatabase db = new CwmsDatabase(o);
+            Oracle o = Oracle.Connect(dbconfig);
+            CwmsDatabase db = new CwmsDatabase(o);
             //db.SetTimeZone("GMT");
 
-            //db.SetOffice("NWDM");
-            //var id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
-
-            //TimeSeries ts = db.GetTimeSeries(id, DateTime.Now.AddHours(-56), DateTime.Now);
-            //ts.WriteToConsole();
-
-            //db.SaveTimeSeries(ts)
+            db.SetOffice("NWDM");
+          
 
             //ClosedXML throws exception when excel wb is open
-            TimeSeries[] tsArrays =ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, endTime, startTime);
+            TimeSeries[] tsArrays =ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime);
             foreach (TimeSeries ts in tsArrays)
              {
-              
-
+                db.WriteTimeSeries(ts);
+                db.ReadTimeSeries(ts.TSID, startTime, endTime).WriteToConsole();
             }
-            
-
-            Console.Read();
-            
+            Console.Read();         
         }
 
     private static void TestSave(string dbconfig)
@@ -82,11 +71,17 @@ namespace ExcelToCWMS
      // db.SetTimeZone("GMT");
       db.SetOffice("NWDM");
 
-      var ts2 = db.GetTimeSeries(id, DateTime.Now.AddDays(-2), DateTime.Now);
+      var ts2 = db.ReadTimeSeries(id, DateTime.Now.AddDays(-2), DateTime.Now);
       ts2.WriteToConsole();
 
-      db.SaveTimeSeries(ts);
+      db.WriteTimeSeries(ts);
     }
+        private static void TestPrint(CwmsDatabase db)
+        {
+            var id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
+            TimeSeries ts = db.ReadTimeSeries(id, DateTime.Now.AddHours(-56), DateTime.Now);
+            ts.WriteToConsole();
+        }
   }
     
 }

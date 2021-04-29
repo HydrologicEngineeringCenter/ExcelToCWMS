@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace Hec.Data
 {
-    public class TimeSeries : ITimeSeries
+    public class TimeSeries
     {
-        public string TSID {
-            get
-            { return _tsid; }
-            set 
-            { _tsid = value;} 
-        }
+    public string TSID { get; set; }
+
     public string Units { get; set; }
 
     public double[] Values
@@ -50,7 +46,7 @@ namespace Hec.Data
         return rval.ToArray();
     }
 
-    public static DateTime UnixEpoch()
+    private static DateTime UnixEpoch()
     {
       return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     }
@@ -65,7 +61,6 @@ namespace Hec.Data
       return (long)(dateTime - UnixEpoch()).TotalMilliseconds;
     }
 
-    private string _tsid;
         //SortedList is faster than SortedDictionary if inputing data in sorted order
         //https://stackoverflow.com/questions/1376965/when-to-use-a-sortedlisttkey-tvalue-over-a-sorteddictionarytkey-tvalue
         private SortedList<DateTime, TimeSeriesValue> data = new SortedList<DateTime, TimeSeriesValue>();
@@ -90,7 +85,7 @@ namespace Hec.Data
 
         public void WriteToConsole()
         {
-            Console.WriteLine("TSID = "+_tsid);
+            Console.WriteLine("TSID = "+TSID);
             foreach (var item in data)
             {
                 Console.WriteLine("{0:dd-MMM-yyyy HHmm}{1,10:f3}{2,8:d}", item.Key, item.Value.Value, item.Value.Quality);
