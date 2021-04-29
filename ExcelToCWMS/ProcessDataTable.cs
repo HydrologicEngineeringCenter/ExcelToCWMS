@@ -19,7 +19,10 @@ namespace ExcelToCWMS
             foreach (DataColumn dc in dt.Columns)
             {
                 if (dc.ColumnName.ToLower() == "date") continue;
-                tsDict.Add(dc.ColumnName, new TimeSeries(dc.ColumnName));
+                string header = dc.ColumnName;
+                string tsid = header.Split('[',']')[0];
+                string units = header.Split('[',']')[1];
+                tsDict.Add(header, new TimeSeries(tsid,units));
 
             }
             //https://www.c-sharpcorner.com/blogs/filter-datetime-from-datatable-in-c-sharp1
@@ -34,17 +37,15 @@ namespace ExcelToCWMS
                 {
                     continue;
                 }              
-                foreach (string tsid in tsDict.Keys)
+                foreach (string header in tsDict.Keys)
                 {
-
-                    string value = row.Field<string>(tsid);
+                    string value = row.Field<string>(header);
                     if (!double.TryParse(value, out double dval))
                     {
                         throw new Exception("Could not convert " + value + "to double ");
                     }
-                    tsDict[tsid].Add(t, dval);
-                }
-                
+                    tsDict[header].Add(t, dval);
+                }               
             }                  
             return tsDict.Values.ToArray();
 

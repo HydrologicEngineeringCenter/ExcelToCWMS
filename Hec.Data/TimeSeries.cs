@@ -65,9 +65,10 @@ namespace Hec.Data
         //https://stackoverflow.com/questions/1376965/when-to-use-a-sortedlisttkey-tvalue-over-a-sorteddictionarytkey-tvalue
         private SortedList<DateTime, TimeSeriesValue> data = new SortedList<DateTime, TimeSeriesValue>();
 
-        public TimeSeries(string id="")
+        public TimeSeries(string id="", string units="")
         {
             this.TSID = id;
+            this.Units = units;
         }
 
         public TimeSeriesValue this[DateTime t]
@@ -86,6 +87,7 @@ namespace Hec.Data
         public void WriteToConsole()
         {
             Console.WriteLine("TSID = "+TSID);
+            Console.WriteLine("Units = " + Units);
             foreach (var item in data)
             {
                 Console.WriteLine("{0:dd-MMM-yyyy HHmm}{1,10:f3}{2,8:d}", item.Key, item.Value.Value, item.Value.Quality);
