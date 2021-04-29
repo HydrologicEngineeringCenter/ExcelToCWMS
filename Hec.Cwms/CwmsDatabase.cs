@@ -17,6 +17,8 @@ namespace Hec.Cwms
     public CwmsDatabase(Oracle oracle)
     {
       this.oracle = oracle;
+      this.officeID = oracle.officeid;
+      SetOffice();
     }
 
     public enum StorageRule {
@@ -47,15 +49,13 @@ namespace Hec.Cwms
     /// --exec cwms_env.set_session_office_id('NAB');
     /// </summary>
     /// <param name="officeId"></param>
-    public int SetOffice(string officeID)
+    public int SetOffice()
     {
       OracleCommand cmd = new OracleCommand();
       cmd.Parameters.Add("P_OFFICE_ID", OracleDbType.Varchar2, 200, officeID, ParameterDirection.Input);
       cmd.CommandText = "cwms_env.set_session_office_id";
       cmd.CommandType = CommandType.StoredProcedure;
-
       int status = oracle.RunStoredProc(cmd);
-      this.officeID = officeID;
       return status;
     }
 
