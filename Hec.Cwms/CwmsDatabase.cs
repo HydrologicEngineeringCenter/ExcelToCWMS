@@ -53,6 +53,7 @@ namespace Hec.Cwms
       cmd.Parameters.Add("P_OFFICE_ID", OracleDbType.Varchar2, 200, officeID, ParameterDirection.Input);
       cmd.CommandText = "cwms_env.set_session_office_id";
       cmd.CommandType = CommandType.StoredProcedure;
+
       int status = oracle.RunStoredProc(cmd);
       this.officeID = officeID;
       return status;
