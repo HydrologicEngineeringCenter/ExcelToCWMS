@@ -14,12 +14,16 @@ namespace ExcelToCWMS
         {
             ClosedXML c = new ClosedXML(filename);
             DataTable dt = c.GetDataTable(sheetName);
-            //List <String> tsids = new List<String>();
             Dictionary<string, TimeSeries> tsDict = new Dictionary<string, TimeSeries>();
             foreach (DataColumn dc in dt.Columns)
             {
                 if (dc.ColumnName.ToLower() == "date") continue;
                 string header = dc.ColumnName;
+                if (!header.Contains("{units="))
+                {
+                    throw new Exception("COULD NOT FIND PARAMETERS IN '" + dc.ColumnName + "'\n" +
+                        "Use Convetion '02600.Flow.Inst.~1Day.0.DailyComputed{units=CFS}'" );
+                }
                 string tsid = header.Split('{','}')[0];
                 string units = header.Split('{', '}')[1].Split('=')[1];
                 tsDict.Add(header, new TimeSeries(tsid,units));
