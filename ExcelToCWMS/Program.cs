@@ -38,9 +38,6 @@ namespace ExcelToCWMS
             DateTime startTime= endTime.AddDays(-lookBackDays);
             Console.WriteLine(startTime);
 
-
-
-
             Oracle o = Oracle.Connect(dbconfig);
             CwmsDatabase db = new CwmsDatabase(o);
             //db.SetTimeZone("GMT");

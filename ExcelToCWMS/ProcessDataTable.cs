@@ -20,8 +20,8 @@ namespace ExcelToCWMS
             {
                 if (dc.ColumnName.ToLower() == "date") continue;
                 string header = dc.ColumnName;
-                string tsid = header.Split('[',']')[0];
-                string units = header.Split('[',']')[1];
+                string tsid = header.Split('{','}')[0];
+                string units = header.Split('{', '}')[1].Split('=')[1];
                 tsDict.Add(header, new TimeSeries(tsid,units));
 
             }
