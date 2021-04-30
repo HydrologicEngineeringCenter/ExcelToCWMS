@@ -4,26 +4,28 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ExcelToCWMS
 {
     public class ProcessDataTable
-    {     
-           public static TimeSeries[] GetTimeSeriesFromExcel(string filename, string sheetName, DateTime startTime, DateTime endTime)
+    {
+        public static TimeSeries[] GetTimeSeriesFromExcel(string filename, string sheetName, DateTime startTime, DateTime endTime)
         {
             ClosedXML c = new ClosedXML(filename);
             DataTable dt = c.GetDataTable(sheetName);
-            //List <String> tsids = new List<String>();
+            //This Dict is <column header of DataTable, TImeSeries>
             Dictionary<string, TimeSeries> tsDict = new Dictionary<string, TimeSeries>();
             foreach (DataColumn dc in dt.Columns)
             {
                 if (dc.ColumnName.ToLower() == "date") continue;
-                tsDict.Add(dc.ColumnName, new TimeSeries(dc.ColumnName));
-
+                string header = dc.ColumnName;
+                ParseHeader(header, out string id, out string units, out string tz);
+                tsDict.Add(header, new TimeSeries(id, units));
             }
             //https://www.c-sharpcorner.com/blogs/filter-datetime-from-datatable-in-c-sharp1
-            
+
             foreach (DataRow row in dt.Rows)
             {
                 if (!DateTime.TryParse(row[0].ToString(), out DateTime t))
@@ -33,24 +35,36 @@ namespace ExcelToCWMS
                 if (!(t >= startTime && t <= endTime))
                 {
                     continue;
-                }              
-                foreach (string tsid in tsDict.Keys)
+                }
+                foreach (string header in tsDict.Keys)
                 {
-
-                    string value = row.Field<string>(tsid);
+                    string value = row.Field<string>(header);
                     if (!double.TryParse(value, out double dval))
                     {
                         throw new Exception("Could not convert " + value + "to double ");
                     }
-                    tsDict[tsid].Add(t, dval);
+                    tsDict[header].Add(t, dval);
                 }
-                
-            }                  
+            }
             return tsDict.Values.ToArray();
 
+        }        
+        public static void ParseHeader(String header, out string id, out string units, out string tz)
+        {
+            string re = @"\s{0,1}(?<id>.*){(units=(?<units>\w+))(,\s*timezone=(?<timezone>\w+))?}\s*";
+            id = units = tz = "";
+            Match m = Regex.Match(header, re);
+            if (!m.Success)
+            {
+                throw new Exception("Could not Parse Column Header " + header);
+            }
+            id = m.Groups["id"].Value;
+            units = m.Groups["units"].Value;
+            tz = m.Groups["timezone"].Value;
         }
     }
 }
+
         
            
             
