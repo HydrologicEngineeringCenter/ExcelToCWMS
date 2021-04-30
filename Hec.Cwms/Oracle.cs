@@ -24,30 +24,15 @@ namespace Hec.Cwms
         /// </summary>
         /// <param name="fileName">text file with login info</param>
         /// <returns></returns>
-        public static Oracle Connect(string fileName)
+        public static Oracle Connect(string user, string host, string sid, string port)
         {
-            var lines = File.ReadAllLines(fileName);
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-            foreach (var item in lines)
-            {
-                var tokens = item.Split(':');
-                if (tokens.Length == 2)
-                {
-                    dict.Add(tokens[0], tokens[1]);
-                }
-            }
 
-            dict.TryGetValue("user", out string user);
-            dict.TryGetValue("sid", out string sid);
-            dict.TryGetValue("host", out string host);
-            dict.TryGetValue("port", out string port);
-            dict.TryGetValue("officeid", out string officeid);
-            Console.WriteLine("user: " + user);
+            Console.WriteLine("User: " +user);
             Console.Write("password:");
             string pass = Console.ReadLine();
 
 
-            var o = new Oracle(user, pass, host, sid, officeid, port);
+            var o = new Oracle(user, pass, host, sid, port);
 
 
             return o;
@@ -71,13 +56,12 @@ namespace Hec.Cwms
     string ConnectionString { get; set; }
 
   
-    public Oracle(string user, string pass, string host, string service,  string officeid, string port = "1521")
+    public Oracle(string user, string pass, string host, string service, string port = "1521")
     {
       this.user = user;
       this.pass = pass;
       this.host = host;
       this.service = service;
-      this.officeid = officeid;
       this.port = port;
       
 
