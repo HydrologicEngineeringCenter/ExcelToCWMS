@@ -21,8 +21,8 @@ namespace ExcelToCWMS
             {
                 if (dc.ColumnName.ToLower() == "date") continue;
                 string header = dc.ColumnName;
-                var parts = ParseHeader(header);
-                tsDict.Add(header, new TimeSeries(parts[0], parts[1]));
+                ParseHeader(header, out string id, out string units, out string tz);
+                tsDict.Add(header, new TimeSeries(id, units));
             }
             //https://www.c-sharpcorner.com/blogs/filter-datetime-from-datatable-in-c-sharp1
 
@@ -48,33 +48,19 @@ namespace ExcelToCWMS
             }
             return tsDict.Values.ToArray();
 
-        }
-
-        private static List<string> ParseHeader(string header)
+        }        
+        public static void ParseHeader(String header, out string id, out string units, out string tz)
         {
-            if (!header.Contains("{units="))
+            string re = @"\s{0,1}(?<id>.*){(units=(?<units>\w+))(,\s*timezone=(?<timezone>\w+))?}\s*";
+            id = units = tz = "";
+            Match m = Regex.Match(header, re);
+            if (!m.Success)
             {
-                throw new Exception("COULD NOT FIND UNITS  PARAMETER IN '" + header + "'\n" +
-                    "Use Convetion '02600.Flow.Inst.~1Day.0.DailyComputed{units=CFS}'");
+                throw new Exception("Could not Parse Column Header " + header);
             }
-            string[] headerparts = header.Split('{', '}');
-            if (headerparts.Length > 3)
-            {
-                throw new Exception("PROBLEM Parsing'" + header + "'\n" +
-                    "Use Convetion '02600.Flow.Inst.~1Day.0.DailyComputed{units=CFS}'");
-            }
-            List<string> partslist = new List<string>();
-            partslist.Add(headerparts[0]);
-            partslist.Add(headerparts[1].Split('=')[1]);
-            return partslist;
-        }
-
-        //playing with regex
-        public static bool useRegex(String header)
-        {
-            Regex regex = new Regex("^.*\\{.*=.*\\}$", RegexOptions.IgnoreCase);
-            return regex.IsMatch(header);
-
+            id = m.Groups["id"].Value;
+            units = m.Groups["units"].Value;
+            tz = m.Groups["timezone"].Value;
         }
     }
 }

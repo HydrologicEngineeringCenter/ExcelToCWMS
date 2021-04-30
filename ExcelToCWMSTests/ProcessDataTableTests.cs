@@ -11,7 +11,9 @@ namespace ExcelToCWMS.Tests
 {
     [TestClass()]
     public class ProcessDataTableTests
-    {
+    {/// <summary>
+    /// Description Here
+    /// </summary>
         [TestMethod()]
         public void GetTimeSeriesFromExcelTest()
         {
@@ -20,15 +22,23 @@ namespace ExcelToCWMS.Tests
             {
                 ts.WriteToConsole();
             }
-            Assert.Fail();
+            Assert.AreEqual(2, TimeSeriesArray.Length);
         }
+        /// <summary>
+        /// Description Here
+        /// </summary>
         [TestMethod()]
         public void GetTSStartTimeTest()
         {
-            var TimeSeriesArray = ProcessDataTable.GetTimeSeriesFromExcel("input.xlsx", "import", DateTime.Parse("2021-03-01"), DateTime.Parse("2021-03-03"));
+            DateTime t1 = DateTime.Parse("2021-03-01");
+            DateTime t2 = DateTime.Parse("2021-03-03");
+
+            var TimeSeriesArray = ProcessDataTable.GetTimeSeriesFromExcel("input.xlsx", "import", t1, t2);
             Console.WriteLine( "Start Time: "+ TimeSeriesArray[0].getTSStartTime());
             Console.WriteLine("End Time: " + TimeSeriesArray[0].getTSSEndTime());
-            Assert.Fail();
+            Assert.AreEqual(t1, TimeSeriesArray[0].getTSStartTime());
+            Assert.AreEqual(t2, TimeSeriesArray[0].getTSSEndTime());
+
         }
 
 
