@@ -19,7 +19,6 @@ namespace Hec.Cwms
         /// user:username
         /// sid:aabb11
         /// host:oracle host name
-        /// officeid:NWDM
         /// port:1521
         /// </summary>
         /// <param name="fileName">text file with login info</param>
