@@ -39,7 +39,7 @@ namespace ExcelToCWMS
             
             var cr = new ConfigReader(dbconfig);
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
-            CwmsDatabase db = new CwmsDatabase(o);
+            CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
 
             //ClosedXML throws exception when excel wb is open
             TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime);
@@ -60,7 +60,7 @@ namespace ExcelToCWMS
             ts.Units = "mm";
             var cr = new ConfigReader(dbconfig);
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
-            CwmsDatabase db = new CwmsDatabase(o);
+            CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
 
             var ts2 = db.ReadTimeSeries(id, DateTime.Now.AddDays(-2), DateTime.Now);
             ts2.WriteToConsole();

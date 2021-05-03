@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Hec.Cwms
 {
-  public class CwmsDatabase
-  {
+    public class CwmsDatabase
+    { 
+    private string  officeID = "";
     private Oracle oracle;
-    private string officeID = "";
-    public CwmsDatabase(Oracle oracle)
+    public CwmsDatabase(Oracle oracle, string officeID)
     {
       this.oracle = oracle;
-      this.officeID = oracle.officeid;
+      this.officeID = officeID;
       SetOffice();
     }
 
