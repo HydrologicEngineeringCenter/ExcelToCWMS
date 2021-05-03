@@ -49,7 +49,7 @@ namespace Hec.Cwms
     /// --exec cwms_env.set_session_office_id('NAB');
     /// </summary>
     /// <param name="officeId"></param>
-    public int SetOffice()
+    private int SetOffice()
     {
       OracleCommand cmd = new OracleCommand();
       cmd.Parameters.Add("P_OFFICE_ID", OracleDbType.Varchar2, 200, officeID, ParameterDirection.Input);
