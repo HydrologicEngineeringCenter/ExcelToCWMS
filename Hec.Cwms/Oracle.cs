@@ -50,7 +50,6 @@ namespace Hec.Cwms
         private string host;
         private string service;
         private string port;
-        public string officeid { get; set; }
 
 
     string ConnectionString { get; set; }
