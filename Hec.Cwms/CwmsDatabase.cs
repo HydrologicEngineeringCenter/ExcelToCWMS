@@ -48,7 +48,6 @@ namespace Hec.Cwms
     /// <summary>
     /// --exec cwms_env.set_session_office_id('NAB');
     /// </summary>
-    /// <param name="officeId"></param>
     private int SetOffice()
     {
       OracleCommand cmd = new OracleCommand();
