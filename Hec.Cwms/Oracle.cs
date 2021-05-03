@@ -10,58 +10,47 @@ using System.Threading.Tasks;
 
 namespace Hec.Cwms
 {
-  public class Oracle
-  {
-    private string user;
-
-    /// <summary>
-    /// Connects from text file with key:value
-    /// user:username
-    /// sid:aabb11
-    /// host:oracle host name
-    /// port:1521
-    /// </summary>
-    /// <param name="fileName">text file with login info</param>
-    /// <returns></returns>
-    public static Oracle Connect(string fileName)
+    public class Oracle
     {
-      var lines = File.ReadAllLines(fileName);
-      Dictionary<string, string> dict = new Dictionary<string, string>();
-      foreach (var item in lines)
-      {
-        var tokens = item.Split(':');
-        if( tokens.Length  == 2)
+        private string user;
+
+        /// <summary>
+        /// Connects from text file with key:value
+        /// user:username
+        /// sid:aabb11
+        /// host:oracle host name
+        /// port:1521
+        /// </summary>
+        /// <param name="fileName">text file with login info</param>
+        /// <returns></returns>
+        public static Oracle Connect(string user, string host, string sid, string port)
         {
-          dict.Add(tokens[0], tokens[1]);
+
+            Console.WriteLine("User: " +user);
+            Console.Write("password:");
+            string pass = Console.ReadLine();
+
+
+            var o = new Oracle(user, pass, host, sid, port);
+
+
+            return o;
+
         }
-      }
 
-      dict.TryGetValue("user", out string user);
-      dict.TryGetValue("sid", out string sid);
-      dict.TryGetValue("host", out string host);
-      dict.TryGetValue("port", out string port);
-      Console.Write("password:");
-      string pass = Console.ReadLine();
-      
-
-      var o = new Oracle(user, pass,host,sid, port);
-      
-      
-      return o;
-
-    }
-
-    internal OracleConnection GetConnection()
-    {
-      var conn = new OracleConnection(ConnectionString);
-      return conn;
-    }
+        internal OracleConnection GetConnection()
+        {
+            var conn = new OracleConnection(ConnectionString);
+            return conn;
+        }
 
 
-    private string pass;
-    private string host;
-    private string service;
-    private string port;
+        private string pass;
+        private string host;
+        private string service;
+        private string port;
+
+
     string ConnectionString { get; set; }
 
   
@@ -72,6 +61,7 @@ namespace Hec.Cwms
       this.host = host;
       this.service = service;
       this.port = port;
+      
 
       ConnectionString = GetConnectionString();
       Console.WriteLine(ConnectionString.Replace(";Password=" + pass, ";Password=***"));
