@@ -41,7 +41,6 @@ namespace ExcelToCWMS
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
 
-            //ClosedXML throws exception when excel wb is open
             TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime);
             foreach (TimeSeries ts in tsArrays)
             {
@@ -50,6 +49,7 @@ namespace ExcelToCWMS
             }
             Console.Read();
         }
+
 
         private static void TestSave(string dbconfig)
         {
@@ -67,6 +67,7 @@ namespace ExcelToCWMS
 
             db.WriteTimeSeries(ts);
         }
+
         private static void TestPrint(CwmsDatabase db)
         {
             var id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";

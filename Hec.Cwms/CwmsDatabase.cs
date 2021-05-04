@@ -14,6 +14,8 @@ namespace Hec.Cwms
     { 
     private string  officeID = "";
     private Oracle oracle;
+
+
     public CwmsDatabase(Oracle oracle, string officeID)
     {
       this.oracle = oracle;
