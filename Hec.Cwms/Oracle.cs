@@ -1,12 +1,7 @@
 ﻿using Oracle.ManagedDataAccess.Client;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Hec.Cwms
 {
@@ -26,15 +21,14 @@ namespace Hec.Cwms
         {
 
             Console.WriteLine("User: " + user);
-            Console.Write("password:");
-            string pass = Console.ReadLine();
-
+            string pass = GetHiddenPassword("Password: ");
             var o = new Oracle(user, pass, host, sid, port);
 
             return o;
 
         }
 
+       
         internal OracleConnection GetConnection()
         {
             var conn = new OracleConnection(ConnectionString);
@@ -50,7 +44,7 @@ namespace Hec.Cwms
 
         string ConnectionString { get; set; }
 
-
+        
         public Oracle(string user, string pass, string host, string service, string port = "1521")
         {
             this.user = user;
@@ -64,6 +58,9 @@ namespace Hec.Cwms
             Console.WriteLine(ConnectionString.Replace(";Password=" + pass, ";Password=***"));
         }
 
+     
+
+
         private string GetConnectionString()
         {
 
@@ -73,6 +70,7 @@ namespace Hec.Cwms
                  + "User Id=" + user + ";Password=" + pass + ";";// enlist=false;pooling=false;";
         }
 
+  
 
         public int RunStoredProc(OracleCommand cmd)
         {
@@ -146,6 +144,38 @@ namespace Hec.Cwms
             }
             DataTable tbl = myDataSet.Tables[tableName];
             return tbl;
+        }
+        /// <summary>
+        /// Hides password entered in console and returns password as string
+        /// </summary>
+        /// <param name="displayMessage"></param>
+        /// <returns></returns>
+        private static string GetHiddenPassword(string displayMessage)
+        {
+            Console.Write(displayMessage);
+            var pwd = string.Empty;
+            while (true)
+            {
+                ConsoleKeyInfo i = Console.ReadKey(true);
+                if (i.Key == ConsoleKey.Enter)
+                {
+                    break;
+                }
+                else if (i.Key == ConsoleKey.Backspace)
+                {
+                    if (pwd.Length > 0)
+                    {
+                        pwd = pwd.Remove(pwd.Length - 1, 1);
+                        Console.Write("\b \b");
+                    }
+                }
+                else if (i.KeyChar != '\u0000') // KeyChar == '\u0000' if the key pressed does not correspond to a printable character, e.g. F1, Pause-Break, etc
+                {
+                    pwd += (i.KeyChar);
+                    Console.Write("*");
+                }
+            }
+            return pwd;
         }
     }
 }
