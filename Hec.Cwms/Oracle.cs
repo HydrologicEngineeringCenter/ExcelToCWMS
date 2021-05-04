@@ -149,7 +149,7 @@ namespace Hec.Cwms
         /// Hides password entered in console and returns password as string
         /// </summary>
         /// <param name="displayMessage"></param>
-        /// <returns></returns>
+        /// <returns>string password</returns>
         private static string GetHiddenPassword(string displayMessage)
         {
             Console.Write(displayMessage);
