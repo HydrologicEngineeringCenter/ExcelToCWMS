@@ -72,19 +72,7 @@ namespace ExcelToCWMS
             }
 
         }
-
-        private System.Data.DataTable GetDataTable1(string sheetName)
-        {
-            using (var wb = new XLWorkbook(m_filename))
-            {
-                var ws = wb.Worksheet(sheetName);
-                DataTable dataTable = ws.RangeUsed().AsTable().AsNativeDataTable();
-
-                return dataTable;
-            }
-
-        }
-
+   
         /// <summary>
         /// 
         /// </summary>
