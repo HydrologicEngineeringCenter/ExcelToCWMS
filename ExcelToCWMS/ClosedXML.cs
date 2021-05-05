@@ -24,38 +24,51 @@ namespace ExcelToCWMS
         public System.Data.DataTable GetDataTable(string sheetName)
         {
             var rval = new DataTable();
-
-            using (var wb = new XLWorkbook(m_filename))
-            {
-                var ws = wb.Worksheet(sheetName);
-                var range = ws.Range(ws.FirstCellUsed(), ws.LastCellUsed());
-
-                var columnCount = range.ColumnCount();
-                var rowCount = range.RowCount();
-                for (var i = 1; i <= columnCount; i++)
+            try {
+                using (var wb = new XLWorkbook(m_filename))
                 {
-                    var columnName = ws.Cell(1, i);
-                    rval.Columns.Add(columnName.Value.ToString());
-                }
-                foreach (var xlRow in range.Rows().Skip(1))
-                {
-                    DataRow row = rval.NewRow();
-                    for (int i = 0; i < xlRow.CellCount(); i++)
+                    var ws = wb.Worksheet(sheetName);
+                    var range = ws.Range(ws.FirstCellUsed(), ws.LastCellUsed());
+
+                    var columnCount = range.ColumnCount();
+                    var rowCount = range.RowCount();
+                    for (var i = 1; i <= columnCount; i++)
                     {
-                        var c = xlRow.Cell(i + 1);
-                        if (c.HasFormula && c.CachedValue != null)
-                        {
-                            row[i] = c.CachedValue.ToString();
-                        }
-                        else
-                        {
-                            row[i] = c.Value.ToString();
-                        }
+                        var columnName = ws.Cell(1, i);
+                        rval.Columns.Add(columnName.Value.ToString());
                     }
-                    rval.Rows.Add(row);
-                }
+                    foreach (var xlRow in range.Rows().Skip(1))
+                    {
+                        DataRow row = rval.NewRow();
+                        for (int i = 0; i < xlRow.CellCount(); i++)
+                        {
+                            var c = xlRow.Cell(i + 1);
+                            if (c.HasFormula && c.CachedValue != null)
+                            {
+                                row[i] = c.CachedValue.ToString();
+                            }
+                            else
+                            {
+                                row[i] = c.Value.ToString();
+                            }
+                        }
+                        rval.Rows.Add(row);
+                    }
 
-                return rval;
+                    return rval;
+                }
+              
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.Message +"\n");
+                Console.WriteLine("An issue occurred reading the xlsx file, \n" +
+                    "Please save and close the file then try again");
+                Console.WriteLine("Press ENTER to exit.........");
+                ConsoleKeyInfo keyInfo = Console.ReadKey();
+                while (keyInfo.Key != ConsoleKey.Enter)
+                    keyInfo = Console.ReadKey();
+                System.Environment.Exit(0);
+                return rval; //Making compiler happy           
             }
 
         }
