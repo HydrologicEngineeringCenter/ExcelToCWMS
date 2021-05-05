@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -123,6 +124,37 @@ namespace ExcelToCWMS
         public bool SheetExist(string sheetName)
         {
             return SheetNames.Contains(sheetName, StringComparer.InvariantCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Returns false is the specified file is open
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public bool IsFileOpen(string filename)
+        {
+            try
+            {
+                FileInfo f = new FileInfo(filename);
+                using (FileStream stream = f.Open(FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    stream.Close();
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine(e.Message + "\n");
+                Console.WriteLine("An issue occurred reading the xlsx file, \n" +
+                    "Please save and close the file then try again");
+                Console.WriteLine("Press ENTER to try again.........");
+                ConsoleKeyInfo keyInfo = Console.ReadKey();
+                while (keyInfo.Key != ConsoleKey.Enter)
+                    keyInfo = Console.ReadKey();
+                return true;
+            }
+
+            //file is not locked
+            return false;
         }
     }
 }
