@@ -16,7 +16,7 @@ namespace ExcelToCWMS
         {
             if (IsFileOpen(filename))
             {
-                m_filename = CreateTempFile(filename);
+                m_filename = CreateWorkingCopy(filename);
             }
             else { m_filename = filename; }
         }
@@ -145,15 +145,13 @@ namespace ExcelToCWMS
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public string CreateTempFile(string filename)
+        private static string CreateWorkingCopy(string filename)
         {
-            var myUniqueFileName = string.Format(@"{0}.xlsx", DateTime.Now.Ticks);
-            string tempFilename = Path.GetTempPath() + "/" + myUniqueFileName;
+            string exstension = Path.GetExtension(filename);
+            string tempFilename = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString()+ exstension);
             Console.WriteLine("Copying File to "+ tempFilename);
             File.Copy(filename, tempFilename, true);
             return tempFilename;
-
-
 
         }
     }
