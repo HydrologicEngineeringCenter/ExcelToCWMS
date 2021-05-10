@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,11 @@ namespace ExcelToCWMS
         string m_filename;
         public ClosedXML(string filename)
         {
-            m_filename = filename;
+            if (IsFileOpen(filename))
+            {
+                m_filename = CreateWorkingCopy(filename);
+            }
+            else { m_filename = filename; }
         }
         /// <summary>
         /// read a worksheet as a DataTable
@@ -54,23 +59,11 @@ namespace ExcelToCWMS
                     }
                     rval.Rows.Add(row);
                 }
-
+                
                 return rval;
             }
 
-        }
-
-        private System.Data.DataTable GetDataTable1(string sheetName)
-        {
-            using (var wb = new XLWorkbook(m_filename))
-            {
-                var ws = wb.Worksheet(sheetName);
-                DataTable dataTable = ws.RangeUsed().AsTable().AsNativeDataTable();
-
-                return dataTable;
-            }
-
-        }
+        }      
 
         /// <summary>
         /// 
@@ -122,6 +115,44 @@ namespace ExcelToCWMS
         public bool SheetExist(string sheetName)
         {
             return SheetNames.Contains(sheetName, StringComparer.InvariantCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Returns false is the specified file is open
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public bool IsFileOpen(string filename)
+        {
+            try
+            {
+                FileInfo f = new FileInfo(filename);
+                using (FileStream stream = f.Open(FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    stream.Close();
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine(e.Message);
+                return true;
+            }
+
+            return false;
+        }
+        /// <summary>
+        /// Copys the given file to the systems temp location and retursn the string file path
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        private static string CreateWorkingCopy(string filename)
+        {
+            string exstension = Path.GetExtension(filename);
+            string tempFilename = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks.ToString()+ exstension);
+            Console.WriteLine("Copying File to "+ tempFilename);
+            File.Copy(filename, tempFilename, true);
+            return tempFilename;
+
         }
     }
 }
