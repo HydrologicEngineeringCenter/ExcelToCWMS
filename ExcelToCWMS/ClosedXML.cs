@@ -14,7 +14,11 @@ namespace ExcelToCWMS
         string m_filename;
         public ClosedXML(string filename)
         {
-            m_filename = filename;
+            if (IsFileOpen(filename))
+            {
+                m_filename = CreateTempFile(filename);
+            }
+            else { m_filename = filename; }
         }
         /// <summary>
         /// read a worksheet as a DataTable
@@ -25,55 +29,42 @@ namespace ExcelToCWMS
         public System.Data.DataTable GetDataTable(string sheetName)
         {
             var rval = new DataTable();
-            try {
-                using (var wb = new XLWorkbook(m_filename))
+
+            using (var wb = new XLWorkbook(m_filename))
+            {
+                var ws = wb.Worksheet(sheetName);
+                var range = ws.Range(ws.FirstCellUsed(), ws.LastCellUsed());
+
+                var columnCount = range.ColumnCount();
+                var rowCount = range.RowCount();
+                for (var i = 1; i <= columnCount; i++)
                 {
-                    var ws = wb.Worksheet(sheetName);
-                    var range = ws.Range(ws.FirstCellUsed(), ws.LastCellUsed());
-
-                    var columnCount = range.ColumnCount();
-                    var rowCount = range.RowCount();
-                    for (var i = 1; i <= columnCount; i++)
-                    {
-                        var columnName = ws.Cell(1, i);
-                        rval.Columns.Add(columnName.Value.ToString());
-                    }
-                    foreach (var xlRow in range.Rows().Skip(1))
-                    {
-                        DataRow row = rval.NewRow();
-                        for (int i = 0; i < xlRow.CellCount(); i++)
-                        {
-                            var c = xlRow.Cell(i + 1);
-                            if (c.HasFormula && c.CachedValue != null)
-                            {
-                                row[i] = c.CachedValue.ToString();
-                            }
-                            else
-                            {
-                                row[i] = c.Value.ToString();
-                            }
-                        }
-                        rval.Rows.Add(row);
-                    }
-
-                    return rval;
+                    var columnName = ws.Cell(1, i);
+                    rval.Columns.Add(columnName.Value.ToString());
                 }
-              
-            }
-            catch (Exception e) {
-                Console.WriteLine(e.Message +"\n");
-                Console.WriteLine("An issue occurred reading the xlsx file, \n" +
-                    "Please save and close the file then try again");
-                Console.WriteLine("Press ENTER to exit.........");
-                ConsoleKeyInfo keyInfo = Console.ReadKey();
-                while (keyInfo.Key != ConsoleKey.Enter)
-                    keyInfo = Console.ReadKey();
-                System.Environment.Exit(0);
-                return rval; //Making compiler happy           
+                foreach (var xlRow in range.Rows().Skip(1))
+                {
+                    DataRow row = rval.NewRow();
+                    for (int i = 0; i < xlRow.CellCount(); i++)
+                    {
+                        var c = xlRow.Cell(i + 1);
+                        if (c.HasFormula && c.CachedValue != null)
+                        {
+                            row[i] = c.CachedValue.ToString();
+                        }
+                        else
+                        {
+                            row[i] = c.Value.ToString();
+                        }
+                    }
+                    rval.Rows.Add(row);
+                }
+                
+                return rval;
             }
 
-        }
-   
+        }      
+
         /// <summary>
         /// 
         /// </summary>
@@ -143,18 +134,27 @@ namespace ExcelToCWMS
             }
             catch (IOException e)
             {
-                Console.WriteLine(e.Message + "\n");
-                Console.WriteLine("An issue occurred reading the xlsx file, \n" +
-                    "Please save and close the file then try again");
-                Console.WriteLine("Press ENTER to try again.........");
-                ConsoleKeyInfo keyInfo = Console.ReadKey();
-                while (keyInfo.Key != ConsoleKey.Enter)
-                    keyInfo = Console.ReadKey();
+                Console.WriteLine(e.Message);
                 return true;
             }
 
-            //file is not locked
             return false;
+        }
+        /// <summary>
+        /// Copys the given file to the systems temp location and retursn the string file path
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public string CreateTempFile(string filename)
+        {
+            var myUniqueFileName = string.Format(@"{0}.xlsx", DateTime.Now.Ticks);
+            string tempFilename = Path.GetTempPath() + "/" + myUniqueFileName;
+            Console.WriteLine("Copying File to "+ tempFilename);
+            File.Copy(filename, tempFilename, true);
+            return tempFilename;
+
+
+
         }
     }
 }
