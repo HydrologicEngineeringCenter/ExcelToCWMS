@@ -13,11 +13,10 @@ namespace ExcelToCWMS
 
             if (args.Length != 5)
             {
-                Console.WriteLine("Usage: ExceltoCWMS.exe db.config input.xlsx Excel_sheetname Date lookBackDays");
+                Console.WriteLine("Usage: 'ExceltoCWMS.exe db.config input.xlsx Excel_sheetname Date lookBackDays'");
                 Console.WriteLine();
-                Console.WriteLine("Read time series data from formatted excel sheet and stuff in Oracle");
+                Console.WriteLine("About: ExcelToCWMS reads time series data from a formatted excel sheet and writes to the Oracle Database");
                 Console.WriteLine();
-                Console.WriteLine("Example: ExceltoCWMS.exe....");
                 Console.WriteLine("");
                 for (int i = 0; i < args.Length; i++)
                 {
