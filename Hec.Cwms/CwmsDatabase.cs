@@ -69,21 +69,21 @@ namespace Hec.Cwms
 
     private string LookupUnits(string tsid)
     {
-      DataTable tbl = oracle.Table("cwms_v_ts_id", "select DB_OFFICE_ID, CWMS_TS_ID,UNIT_ID from cwms_v_ts_id where CWMS_TS_ID = '" + tsid + "' and DB_OFFICE_ID='" + officeID + "' ");
+      DataTable tbl = oracle.Table("cwms_v_ts_id", "select DB_OFFICE_ID, CWMS_TS_ID,UNIT_ID from cwms_v_ts_id where CWMS_TS_ID = '" + tsid + "' and DB_OFFICE_ID='" + officeID + "'");
       if (tbl.Rows.Count > 0)
-        return tbl.Rows[0]["UNIT_ID"].ToString();
+        return tbl.Rows[0][2].ToString();
       return "";
     }
 
 
     public TimeSeries ReadTimeSeries(string tsid, DateTime t1, DateTime t2)
     {
-      TimeSeries rval = new TimeSeries(tsid);
       //01-JAN-1980 1530
       string fmt = "dd-MMM-yyyy HHmm";
       string start_time = t1.ToString(fmt);
       string end_time = t2.ToString(fmt);
       string units = LookupUnits(tsid);
+      TimeSeries rval = new TimeSeries(tsid, units);
       OracleConnection conn = oracle.GetConnection();
       OracleCommand cmd = new OracleCommand();
       cmd.Connection = conn;
