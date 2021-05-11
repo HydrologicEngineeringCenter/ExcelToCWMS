@@ -74,7 +74,24 @@ namespace Hec.Cwms
         return tbl.Rows[0][2].ToString();
       return "";
     }
-
+        /// <summary>
+        /// Uses a switch case take in metric untis and return english units
+        /// </summary>
+        /// <param name="units"></param>
+        /// <returns></returns>
+        private string ChangeMetricToEnglish(string units)
+        {
+            switch (units.ToLower())
+            {
+                case "cms":
+                    return "cfs";
+                case "m":
+                    return "feet";
+                case "mm":
+                    return "in";
+            }
+            return "";
+        }
 
     public TimeSeries ReadTimeSeries(string tsid, DateTime t1, DateTime t2)
     {
@@ -82,7 +99,7 @@ namespace Hec.Cwms
       string fmt = "dd-MMM-yyyy HHmm";
       string start_time = t1.ToString(fmt);
       string end_time = t2.ToString(fmt);
-      string units = LookupUnits(tsid);
+      string units = ChangeMetricToEnglish(LookupUnits(tsid));
       TimeSeries rval = new TimeSeries(tsid, units);
       OracleConnection conn = oracle.GetConnection();
       OracleCommand cmd = new OracleCommand();

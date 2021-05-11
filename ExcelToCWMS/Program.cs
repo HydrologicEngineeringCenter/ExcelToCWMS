@@ -64,7 +64,8 @@ namespace ExcelToCWMS
 
         private static void TestPrint(CwmsDatabase db)
         {
-            var id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
+            var id = "ACIA.Flow.Inst.1Hour.0.Best-NWDM";
+            ///var id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
             TimeSeries ts = db.ReadTimeSeries(id, DateTime.Now.AddHours(-56), DateTime.Now);
             ts.WriteToConsole();
         }
