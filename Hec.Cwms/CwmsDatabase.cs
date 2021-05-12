@@ -99,8 +99,8 @@ namespace Hec.Cwms
       string fmt = "dd-MMM-yyyy HHmm";
       string start_time = t1.ToString(fmt);
       string end_time = t2.ToString(fmt);
-      string units = ChangeMetricToEnglish(LookupUnits(tsid));
-      TimeSeries rval = new TimeSeries(tsid, units);
+      //string units = ChangeMetricToEnglish(LookupUnits(tsid));
+      TimeSeries rval = new TimeSeries(tsid);
       OracleConnection conn = oracle.GetConnection();
       OracleCommand cmd = new OracleCommand();
       cmd.Connection = conn;
@@ -119,7 +119,7 @@ namespace Hec.Cwms
      "  cwms_ts.retrieve_ts( " +
      "    :ts_cur, " +
      "    :tsid, " +
-     "    :units, " +
+     "    cwms_display.retrieve_user_unit_f(cwms_util.split_text(:tsid, 2, '.'), 'EN'), " +
      "    to_date(:start_time, 'dd-mon-yyyy hh24mi'), " +
      "    to_date(:end_time,   'dd-mon-yyyy hh24mi'), " +
      "    'UTC');" +
@@ -140,13 +140,13 @@ namespace Hec.Cwms
               183,
               tsid,
               ParameterDirection.Input));
-      cmd.Parameters.Add(
-          new OracleParameter(
-              "units",
-              OracleDbType.Varchar2,
-              16,
-              units,
-              ParameterDirection.Input));
+      //cmd.Parameters.Add(
+      //    new OracleParameter(
+      //        "units",
+      //        OracleDbType.Varchar2,
+      //        16,
+      //        units,
+      //        ParameterDirection.Input));
       cmd.Parameters.Add(
           new OracleParameter(
               "start_time",
