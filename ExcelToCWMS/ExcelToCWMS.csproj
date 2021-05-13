@@ -70,10 +70,6 @@
       <Project>{63f83db6-7368-47f8-8a97-854617692fb0}</Project>
       <Name>Hec.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TimeUtilities\TimeUtilities.csproj">
-      <Project>{7f5fbc07-d756-475a-9dea-348e1358acb9}</Project>
-      <Name>TimeUtilities</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

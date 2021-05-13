@@ -1,7 +1,6 @@
 ﻿using Hec.Cwms;
 using Hec.Data;
 using System;
-using TimeUtilities;
 
 namespace ExcelToCWMS
 {
@@ -58,7 +57,6 @@ namespace ExcelToCWMS
             ts.Add(new DateTime(2000, 1, 2), 456, 1);
             ts.Units = "mm";
             var cr = new ConfigReader(dbconfig);
-            TimeSpan offset = TzHandler.CreateOffsetTimeSpan(cr.CRead("UTCoffset"));
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
 
