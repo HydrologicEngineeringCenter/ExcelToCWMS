@@ -13,6 +13,9 @@ namespace Hec.Data
 
     public string Units { get; set; }
 
+    public TimeZoneInfo TimeZone { get; }
+
+
     public double[] Values
     {
       get
@@ -66,10 +69,16 @@ namespace Hec.Data
         //https://stackoverflow.com/questions/1376965/when-to-use-a-sortedlisttkey-tvalue-over-a-sorteddictionarytkey-tvalue
         private SortedList<DateTime, TimeSeriesValue> data = new SortedList<DateTime, TimeSeriesValue>();
 
-        public TimeSeries(string id="", string units="")
+        public TimeSeries(string id = "", string units = "")
         {
             this.TSID = id;
             this.Units = units;
+            this.TimeZone = TimeZoneInfo.Utc;
+        } public TimeSeries(string id , string units, TimeZoneInfo tzInfo)
+        {
+            this.TSID = id;
+            this.Units = units;
+            this.TimeZone = tzInfo;
         }
 
         public TimeSeriesValue this[DateTime t]
