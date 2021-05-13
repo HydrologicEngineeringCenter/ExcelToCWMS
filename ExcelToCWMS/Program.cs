@@ -32,10 +32,17 @@ namespace ExcelToCWMS
             DateTime startTime = endTime.AddDays(-lookBackDays);
             
             var cr = new ConfigReader(dbconfig);
+            string tzoffset = cr.CRead("tzoffset");
+            Console.WriteLine("UTC Time Zone Offset from config = "+tzoffset);
+            if(!TimeSpan.TryParse(tzoffset+":00:00", out TimeSpan offset))
+            {
+                throw new Exception("Could not convert " + tzoffset + " to  offset");
+            }
+
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
 
-            TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime);
+            TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime, offset);
             foreach (TimeSeries ts in tsArrays)
             {
                 db.WriteTimeSeries(ts);

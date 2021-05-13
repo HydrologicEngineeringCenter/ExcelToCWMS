@@ -9,7 +9,7 @@ namespace ExcelToCWMS
 {
     public class ProcessDataTable
     {
-        public static TimeSeries[] GetTimeSeriesFromExcel(string filename, string sheetName, DateTime startTime, DateTime endTime)
+        public static TimeSeries[] GetTimeSeriesFromExcel(string filename, string sheetName, DateTime startTime, DateTime endTime, TimeSpan offset)
         {
             ClosedXML c = new ClosedXML(filename);
             DataTable dt = c.GetDataTable(sheetName);
@@ -26,12 +26,11 @@ namespace ExcelToCWMS
 
             foreach (DataRow row in dt.Rows)
             {
-                if (!DateTime.TryParse(row[0].ToString(), out DateTime t))
-                {
-                    throw new Exception("Could not convert date " + row[0].ToString() + "to DateTime ");
-                }
+                DateTime t = ParseExcelDate(row[0].ToString());
+                t = t.Add(-offset);
                 if (!(t >= startTime && t <= endTime))
                 {
+                    Console.WriteLine("Time " + t + " outside of specified range");
                     continue;
                 }
                 foreach (string header in tsDict.Keys)
@@ -46,7 +45,7 @@ namespace ExcelToCWMS
             }
             return tsDict.Values.ToArray();
 
-        }        
+        }
         public static void ParseHeader(String header, out string id, out string units, out string tz)
         {
             string re = @"\s{0,1}(?<id>.*){(units=(?<units>\w+))(,\s*timezone=(?<timezone>\w+))?}\s*";
@@ -59,6 +58,29 @@ namespace ExcelToCWMS
             id = m.Groups["id"].Value;
             units = m.Groups["units"].Value;
             tz = m.Groups["timezone"].Value;
+        }
+        /// <summary>
+        /// Sometimes the date from Excel is a string, other times it is an OA Date:
+        /// Excel stores date values as a Double representing the number of days from January 1, 1900.
+        /// Need to use the FromOADate method which takes a Double and converts to a Date.
+        /// OA = OLE Automation compatible.
+        /// </summary>
+        /// <param name="date">a string to parse into a date</param>
+        /// <returns>a DateTime value; if the string could not be parsed, returns DateTime.MinValue</returns>
+        public static DateTime ParseExcelDate(string date)
+        {
+            DateTime dt;
+            if (DateTime.TryParse(date, out dt))
+            {
+                return dt;
+            }
+
+            double oaDate;
+            if (double.TryParse(date, out oaDate))
+            {
+                return DateTime.FromOADate(oaDate);
+            }
+            throw new Exception("Could not convert date " + date + "to DateTime ");
         }
     }
 }
