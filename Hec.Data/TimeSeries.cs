@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TimeUtilities;
 
 namespace Hec.Data
 {
@@ -84,13 +85,15 @@ namespace Hec.Data
             data.Add(t, new TimeSeriesValue(value, quality));
         }
 
-        public void WriteToConsole()
+        public void WriteToConsole(TimeSpan offset )
         {
             Console.WriteLine("TSID = "+TSID);
             Console.WriteLine("Units = " + Units);
+            Console.WriteLine("Offset = " + offset );
             foreach (var item in data)
             {
-                Console.WriteLine("{0:dd-MMM-yyyy HHmm}{1,10:f3}{2,8:d}", item.Key, item.Value.Value, item.Value.Quality);
+                DateTime localT = TzHandler.ConvertToLocal(item.Key, offset);
+                Console.WriteLine("{0:dd-MMM-yyyy HHmm}{1,10:f3}{2,8:d}", localT, item.Value.Value, item.Value.Quality);
             }
         }
         public DateTime getTSStartTime()

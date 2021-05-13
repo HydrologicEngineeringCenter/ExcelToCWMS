@@ -1,6 +1,7 @@
 ﻿using Hec.Cwms;
 using Hec.Data;
 using System;
+using TimeUtilities;
 
 namespace ExcelToCWMS
 {
@@ -32,12 +33,10 @@ namespace ExcelToCWMS
             DateTime startTime = endTime.AddDays(-lookBackDays);
             
             var cr = new ConfigReader(dbconfig);
-            string tzoffset = cr.CRead("tzoffset");
-            Console.WriteLine("UTC Time Zone Offset from config = "+tzoffset);
-            if(!TimeSpan.TryParse(tzoffset+":00:00", out TimeSpan offset))
-            {
-                throw new Exception("Could not convert " + tzoffset + " to  offset");
-            }
+
+            string utcOffset = cr.CRead("UTCoffset");
+            Console.WriteLine("UTC  Offset from config = "+utcOffset);
+            TimeSpan offset = TzHandler.CreateOffsetTimeSpan(utcOffset);
 
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
@@ -46,7 +45,7 @@ namespace ExcelToCWMS
             foreach (TimeSeries ts in tsArrays)
             {
                 db.WriteTimeSeries(ts);
-                db.ReadTimeSeries(ts.TSID, startTime, endTime).WriteToConsole();
+                db.ReadTimeSeries(ts.TSID, startTime, endTime).WriteToConsole(offset);
             }
             Console.Read();
         }
@@ -60,11 +59,12 @@ namespace ExcelToCWMS
             ts.Add(new DateTime(2000, 1, 2), 456, 1);
             ts.Units = "mm";
             var cr = new ConfigReader(dbconfig);
+            TimeSpan offset = TzHandler.CreateOffsetTimeSpan(cr.CRead("UTCoffset"));
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
 
             var ts2 = db.ReadTimeSeries(id, DateTime.Now.AddDays(-2), DateTime.Now);
-            ts2.WriteToConsole();
+            ts2.WriteToConsole(offset);
 
             db.WriteTimeSeries(ts);
         }
@@ -74,7 +74,7 @@ namespace ExcelToCWMS
             var id = "ACIA.Flow.Inst.1Hour.0.Best-NWDM";
             ///var id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
             TimeSeries ts = db.ReadTimeSeries(id, DateTime.Now.AddHours(-56), DateTime.Now);
-            ts.WriteToConsole();
+            ts.WriteToConsole(new TimeSpan(0,6,0));
         }
     }
 }

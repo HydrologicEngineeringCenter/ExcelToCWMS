@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TimeUtilities;
 
 namespace ExcelToCWMS
 {
@@ -19,7 +20,7 @@ namespace ExcelToCWMS
             {
                 if (dc.ColumnName.ToLower() == "date") continue;
                 string header = dc.ColumnName;
-                ParseHeader(header, out string id, out string units, out string tz);
+                ParseHeader(header, out string id, out string units);
                 tsDict.Add(header, new TimeSeries(id, units));
             }
             //https://www.c-sharpcorner.com/blogs/filter-datetime-from-datatable-in-c-sharp1
@@ -27,10 +28,11 @@ namespace ExcelToCWMS
             foreach (DataRow row in dt.Rows)
             {
                 DateTime t = ParseExcelDate(row[0].ToString());
-                t = t.Add(-offset);
-                if (!(t >= startTime && t <= endTime))
+                DateTime utcT = TzHandler.ConvertToUTC(t, offset);
+
+                if (!(utcT >= startTime && utcT <= endTime))
                 {
-                    Console.WriteLine("Time " + t + " outside of specified range");
+                    Console.WriteLine("Time " + utcT + " outside of specified range");
                     continue;
                 }
                 foreach (string header in tsDict.Keys)
@@ -40,16 +42,16 @@ namespace ExcelToCWMS
                     {
                         throw new Exception("Could not convert " + value + "to double ");
                     }
-                    tsDict[header].Add(t, dval);
+                    tsDict[header].Add(utcT, dval);
                 }
             }
             return tsDict.Values.ToArray();
 
         }
-        public static void ParseHeader(String header, out string id, out string units, out string tz)
+        public static void ParseHeader(String header, out string id, out string units)
         {
             string re = @"\s{0,1}(?<id>.*){(units=(?<units>\w+))(,\s*timezone=(?<timezone>\w+))?}\s*";
-            id = units = tz = "";
+            id = units = "";
             Match m = Regex.Match(header, re);
             if (!m.Success)
             {
@@ -57,7 +59,6 @@ namespace ExcelToCWMS
             }
             id = m.Groups["id"].Value;
             units = m.Groups["units"].Value;
-            tz = m.Groups["timezone"].Value;
         }
         /// <summary>
         /// Sometimes the date from Excel is a string, other times it is an OA Date:

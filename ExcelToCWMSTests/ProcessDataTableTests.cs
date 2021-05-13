@@ -20,7 +20,7 @@ namespace ExcelToCWMS.Tests
             var TimeSeriesArray=ProcessDataTable.GetTimeSeriesFromExcel("input.xlsx", "import", DateTime.Parse("2021-06-01"), DateTime.Parse("2021-06-03"), new TimeSpan(0,0,0));
            foreach (var ts in TimeSeriesArray)
             {
-                ts.WriteToConsole();
+                ts.WriteToConsole(new TimeSpan(0,0,0));
             }
             Assert.AreEqual(2, TimeSeriesArray.Length);
         }
