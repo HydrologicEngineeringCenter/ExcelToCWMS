@@ -40,15 +40,17 @@ namespace Hec.Data
         return rval.ToArray();
       }
     }
-    public long[] TimesAsJavaMilliSeconds()
-    {
-        var rval = new List<long>();
-        foreach (var item in data)
+        public long[] ToJavaMillisUTC()
         {
-          rval.Add(ToMillisecondsSinceUnixEpoch(item.Key));
+            var rval = new List<long>();
+            foreach (var item in data)
+            {
+                DateTime utc =TimeZoneInfo.ConvertTimeToUtc(item.Key, TimeZone);
+                long javamillis =ToMillisecondsSinceUnixEpoch(utc);
+                rval.Add(javamillis);
+            }
+            return rval.ToArray();
         }
-        return rval.ToArray();
-    }
 
     private static DateTime UnixEpoch()
     {
@@ -74,7 +76,7 @@ namespace Hec.Data
             this.TSID = id;
             this.Units = units;
             this.TimeZone = TimeZoneInfo.Utc;
-        } public TimeSeries(string id , string units, TimeZoneInfo tzInfo)
+        } public TimeSeries(string id , string units, TimeZoneInfo  tzInfo)
         {
             this.TSID = id;
             this.Units = units;
@@ -94,15 +96,14 @@ namespace Hec.Data
             data.Add(t, new TimeSeriesValue(value, quality));
         }
 
-        public void WriteToConsole(TimeSpan offset )
+        public void WriteToConsole()
         {
             Console.WriteLine("TSID = "+TSID);
             Console.WriteLine("Units = " + Units);
-            Console.WriteLine("Offset = " + offset );
+            Console.WriteLine("Timezone = " + TimeZone.DisplayName);
             foreach (var item in data)
             {
-                DateTime localT = TzHandler.ConvertToLocal(item.Key, offset);
-                Console.WriteLine("{0:dd-MMM-yyyy HHmm}{1,10:f3}{2,8:d}", localT, item.Value.Value, item.Value.Quality);
+                Console.WriteLine("{0:dd-MMM-yyyy HHmm}{1,10:f3}{2,8:d}", item.Key, item.Value.Value, item.Value.Quality);
             }
         }
         public DateTime getTSStartTime()

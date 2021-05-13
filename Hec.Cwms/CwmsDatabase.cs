@@ -215,7 +215,7 @@ namespace Hec.Cwms
       cmd.Parameters.Add("p_cwms_ts_id", ts.TSID);
       cmd.Parameters.Add("p_units", ts.Units);
 
-      var op = new OracleParameter("p_times", ts.TimesAsJavaMilliSeconds());
+      var op = new OracleParameter("p_times", ts.ToJavaMillisUTC());
       //op.OracleDbType = OracleDbType.Long;
       //op.Size = ts.TimesAsJavaMilliSeconds().Length;
       op.CollectionType = OracleCollectionType.PLSQLAssociativeArray;

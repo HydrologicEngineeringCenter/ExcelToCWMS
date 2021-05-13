@@ -10,7 +10,7 @@ namespace ExcelToCWMS
 {
     public class ProcessDataTable
     {
-        public static TimeSeries[] GetTimeSeriesFromExcel(string filename, string sheetName, DateTime startTime, DateTime endTime, TimeSpan offset)
+        public static TimeSeries[] GetTimeSeriesFromExcel(string filename, string sheetName, DateTime startTime, DateTime endTime, TimeZoneInfo tzInfo)
         {
             ClosedXML c = new ClosedXML(filename);
             DataTable dt = c.GetDataTable(sheetName);
@@ -21,18 +21,17 @@ namespace ExcelToCWMS
                 if (dc.ColumnName.ToLower() == "date") continue;
                 string header = dc.ColumnName;
                 ParseHeader(header, out string id, out string units);
-                tsDict.Add(header, new TimeSeries(id, units));
+                tsDict.Add(header, new TimeSeries(id, units, tzInfo));
             }
             //https://www.c-sharpcorner.com/blogs/filter-datetime-from-datatable-in-c-sharp1
 
             foreach (DataRow row in dt.Rows)
             {
                 DateTime t = ParseExcelDate(row[0].ToString());
-                DateTime utcT = TzHandler.ConvertToUTC(t, offset);
 
-                if (!(utcT >= startTime && utcT <= endTime))
+                if (!(t >= startTime && t <= endTime))
                 {
-                    Console.WriteLine("Time " + utcT + " outside of specified range");
+                    Console.WriteLine("Time " + t + " outside of specified range");
                     continue;
                 }
                 foreach (string header in tsDict.Keys)
@@ -42,7 +41,7 @@ namespace ExcelToCWMS
                     {
                         throw new Exception("Could not convert " + value + "to double ");
                     }
-                    tsDict[header].Add(utcT, dval);
+                    tsDict[header].Add(t, dval);
                 }
             }
             return tsDict.Values.ToArray();

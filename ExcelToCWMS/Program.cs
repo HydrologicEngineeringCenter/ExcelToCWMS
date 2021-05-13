@@ -34,18 +34,17 @@ namespace ExcelToCWMS
             
             var cr = new ConfigReader(dbconfig);
 
-            string utcOffset = cr.CRead("UTCoffset");
-            Console.WriteLine("UTC  Offset from config = "+utcOffset);
-            TimeSpan offset = TzHandler.CreateOffsetTimeSpan(utcOffset);
+            Console.WriteLine("UTC  Offset from config = "+ cr.CRead("timezone"));
+            TimeZoneInfo tzInfo = TimeZoneInfo.FindSystemTimeZoneById(cr.CRead("timezone"));
 
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
 
-            TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime, offset);
+            TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime ,tzInfo);
             foreach (TimeSeries ts in tsArrays)
             {
                 db.WriteTimeSeries(ts);
-                db.ReadTimeSeries(ts.TSID, startTime, endTime).WriteToConsole(offset);
+                db.ReadTimeSeries(ts.TSID, startTime, endTime).WriteToConsole();
             }
             Console.Read();
         }
@@ -64,7 +63,7 @@ namespace ExcelToCWMS
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
 
             var ts2 = db.ReadTimeSeries(id, DateTime.Now.AddDays(-2), DateTime.Now);
-            ts2.WriteToConsole(offset);
+            ts2.WriteToConsole();
 
             db.WriteTimeSeries(ts);
         }
@@ -74,7 +73,7 @@ namespace ExcelToCWMS
             var id = "ACIA.Flow.Inst.1Hour.0.Best-NWDM";
             ///var id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
             TimeSeries ts = db.ReadTimeSeries(id, DateTime.Now.AddHours(-56), DateTime.Now);
-            ts.WriteToConsole(new TimeSpan(0,6,0));
+            ts.WriteToConsole();
         }
     }
 }
