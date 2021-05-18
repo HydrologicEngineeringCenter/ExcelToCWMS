@@ -1,0 +1,31 @@
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using Hec.Data;
+
+namespace ExcelToCWMSTests
+{
+    [TestClass]
+    public class TimeTests
+    {
+
+        [TestMethod]
+        public void ToUnixTimeMilisecondTest()
+        {
+            string id = "ACIA.Flow.Inst.1Hour.0.Best-NWDM";
+            TimeSeries ts = new TimeSeries(id, "CFS", TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
+            ts.Add(new DateTime(2021, 5, 1), 123, 0);
+            ts.Add(new DateTime(2021, 5, 2), 456, 0);
+            ts.Add(new DateTime(2021, 5, 3), 789, 0);
+            ts.Add(new DateTime(2021, 1, 1), 123, 0);
+            ts.Add(new DateTime(2021, 1, 2), 456, 0);
+            ts.Add(new DateTime(2021, 1, 3), 789, 0);
+            ts.WriteToConsole();
+            long[] milis = ts.ToUnixMillisUTC();
+            foreach (long i in milis)
+            {
+                var dto = DateTimeOffset.FromUnixTimeMilliseconds(i).UtcDateTime;
+                Console.WriteLine(dto);
+            }
+        }
+    }
+}

@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="ProcessDataTableTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\input.xlsx">

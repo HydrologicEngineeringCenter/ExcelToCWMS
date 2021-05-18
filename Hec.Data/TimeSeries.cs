@@ -39,32 +39,24 @@ namespace Hec.Data
         return rval.ToArray();
       }
     }
-        public long[] ToJavaMillisUTC()
+        /// <summary>
+        /// Converts each DateTime of TimeSeries to miliseconds since unix epoch
+        ///Note that the ToUnixTimeMiliseconds() method converts the current instance to UTC before returning the number of milliseconds
+        /// https://docs.microsoft.com/en-us/dotnet/api/system.datetimeoffset.tounixtimemilliseconds?view=net-5.0https://docs.microsoft.com/en-us/dotnet/api/system.datetimeoffset.tounixtimemilliseconds?view=net-5.0
+        /// </summary>
+        /// <returns>array of longs representing miliseconds since the unix epoch</returns>
+        public long[] ToUnixMillisUTC()
         {
             var rval = new List<long>();
             foreach (var item in data)
             {
-                DateTime utc =TimeZoneInfo.ConvertTimeToUtc(item.Key, TimeZone);
-                long javamillis =ToMillisecondsSinceUnixEpoch(utc);
-                rval.Add(javamillis);
+                DateTimeOffset dtOffset = item.Key;
+                long javamillisC = dtOffset.ToUnixTimeMilliseconds();
+                rval.Add(javamillisC);
             }
             return rval.ToArray();
+
         }
-
-    private static DateTime UnixEpoch()
-    {
-      return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-    }
-
-    /// <summary>
-    /// https://stackoverflow.com/questions/50485294/pass-integer-array-to-oracle-procedure-by-c-sharp
-    /// </summary>
-    /// <param name="dateTime"></param>
-    /// <returns></returns>
-    private static long ToMillisecondsSinceUnixEpoch(DateTime dateTime)
-    {
-      return (long)(dateTime - UnixEpoch()).TotalMilliseconds;
-    }
 
         //SortedList is faster than SortedDictionary if inputing data in sorted order
         //https://stackoverflow.com/questions/1376965/when-to-use-a-sortedlisttkey-tvalue-over-a-sorteddictionarytkey-tvalue
