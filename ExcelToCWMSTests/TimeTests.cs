@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Hec.Data;
+using Hec.Utilities;
 
 namespace ExcelToCWMSTests
 {
@@ -26,6 +27,19 @@ namespace ExcelToCWMSTests
                 var dto = DateTimeOffset.FromUnixTimeMilliseconds(i).UtcDateTime;
                 Console.WriteLine(dto);
             }
+        }
+        [TestMethod]
+        public void OlsonConverterTest()
+        {
+           string[] zones = { "America/Los_Angeles", "America/Denver", "America/Chicago", "America/New_York" };
+            foreach (string zone in zones)
+            {
+                TimeZoneInfo rval = TimeUtilities.OlsonTimeZoneToTimeZoneInfo(zone);
+                Console.WriteLine(zone + "---" + rval.Id);
+
+            }
+
+
         }
     }
 }
