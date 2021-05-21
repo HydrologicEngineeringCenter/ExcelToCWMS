@@ -5,11 +5,48 @@ using Hec.Utilities;
 
 namespace ExcelToCWMSTests
 {
-    [TestClass]
-    public class TimeTests
+  [TestClass]
+  public class TimeTests
+  {
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [TestMethod]
+    public void BasicsDateTimeOffset() {
+      // 
+      // CWMS database takes : America/Pacific  as input.
+      //  PDT
+      /* Brazil/West
+CAT
+CET
+CNT
+CST
+CST6CDT*/
+      // ts = db.Read("CST") // constant offset
+      // ts = db.Read("CST6CDT") // daylight savings not constant offset
+      // ts.TZ = CST6CDT
+      // convert CST 
+      // ts.TZ == "CST"
+      //   db.Write(ts){
+      //    needs to convert to GMT.. (java style)  we know 'CST6CDT'
+      //}
+
+      var t = new DateTime(2021, 5, 1); // 
+
+
+    }
+    [TestMethod]
+    public void BasicsNodaTime()
     {
 
-        [TestMethod]
+
+
+    }
+
+    [TestMethod]
         public void ToUnixTimeMilisecondTest()
         {
             string id = "ACIA.Flow.Inst.1Hour.0.Best-NWDM";
