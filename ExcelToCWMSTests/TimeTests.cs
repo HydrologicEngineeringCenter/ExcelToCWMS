@@ -2,6 +2,9 @@
 using System;
 using Hec.Data;
 using Hec.Utilities;
+using NodaTime;
+using NodaTime.Text;
+using System.Collections.Generic;
 
 namespace ExcelToCWMSTests
 {
@@ -16,35 +19,70 @@ namespace ExcelToCWMSTests
     /// </summary>
     [TestMethod]
     public void BasicsDateTimeOffset() {
-      // 
-      // CWMS database takes : America/Pacific  as input.
-      //  PDT
-      /* Brazil/West
-CAT
-CET
-CNT
-CST
-CST6CDT*/
-      // ts = db.Read("CST") // constant offset
-      // ts = db.Read("CST6CDT") // daylight savings not constant offset
-      // ts.TZ = CST6CDT
-      // convert CST 
-      // ts.TZ == "CST"
-      //   db.Write(ts){
-      //    needs to convert to GMT.. (java style)  we know 'CST6CDT'
-      //}
-
-      var t = new DateTime(2021, 5, 1); // 
+            // 
+            // CWMS database takes : America/Pacific  as input.
+            //  PDT
+            /* Brazil/West
+      CAT
+      CET
+      CNT
+      CST
+      CST6CDT*/
+            // ts = db.Read("CST") // constant offset
+            // ts = db.Read("CST6CDT") // daylight savings not constant offset
+            // ts.TZ = CST6CDT
+            // convert CST 
+            // ts.TZ == "CST"
+            //   db.Write(ts){
+            //    needs to convert to GMT.. (java style)  we know 'CST6CDT'
+            //}
 
 
-    }
+
+        }
     [TestMethod]
     public void BasicsNodaTime()
-    {
+    {       //This is an example of how of a db.write case
+            var dtlist = new List<DateTime>();
+            //a TimeSeries has some ambiguous DateTimes read from excel. though the represent times in TimeSeries.TZ
+            //The TimeSeries.TZ is a string olson time "Etc/GMT+8" read from db config
+            string tz = "America/Los_Angeles";
+            //string tz = "Etc/GMT+8";
+            DateTimeZone zone = DateTimeZoneProviders.Tzdb[tz];
+            dtlist.Add(new DateTime(2021, 7, 1, 12, 0, 0));
+            dtlist.Add(new DateTime(2021, 7, 2, 12, 0, 0));
+            dtlist.Add(new DateTime(2021, 7, 3, 12, 0, 0));
+            dtlist.Add(new DateTime(2021, 1, 1, 12, 0, 0));
+            dtlist.Add(new DateTime(2021, 1, 2, 12, 0, 0));
+            dtlist.Add(new DateTime(2021, 1, 3, 12, 0, 0));
+            foreach (DateTime dt in dtlist)
+            {
+                Console.WriteLine("Ambiguous DateTime = " + dt);
+
+                //We convert to ambiguous noda time
+                LocalDateTime ldt = LocalDateTime.FromDateTime(dt);   
+                
+                //Then we convert to unambiguous noda time in the TimeSeries.TZ timezone
+                ZonedDateTime zdt = zone.AtStrictly(ldt);
+                var pattern = ZonedDateTimePattern.ExtendedFormatOnlyIso;
+                Console.WriteLine("ZonedDateTime = " + pattern.Format(zdt));
+
+                //Then convert to utc java milis since unix
+                DateTime utcdt = zdt.ToDateTimeUtc();
+                DateTimeOffset dtOffset = utcdt;
+
+                //HERE IS WHERE WE SEND JAVA MILIS TO DATABASE db.write(ts)
+                long javamillisC = dtOffset.ToUnixTimeMilliseconds();
+                Console.WriteLine("java milis utc = " + javamillisC);
+
+                //Convert back to see if DateTime represents ths UTC value
+                DateTime dtbackcheck = DateTimeOffset.FromUnixTimeMilliseconds(javamillisC).DateTime;
+                TimeSpan diff = dt - dtbackcheck;
+                Console.WriteLine("Difference in hours  = " + diff.Hours);
+            }
 
 
-
-    }
+        }
 
     [TestMethod]
         public void ToUnixTimeMilisecondTest()
