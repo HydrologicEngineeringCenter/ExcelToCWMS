@@ -42,9 +42,9 @@ namespace ExcelToCWMSTests
         }
     [TestMethod]
     public void BasicsNodaTime()
-    {       //This is an example of how of a db.write case
+    {       //This is an example of how of a db.write case might work
             var dtlist = new List<DateTime>();
-            //a TimeSeries has some ambiguous DateTimes read from excel. though the represent times in TimeSeries.TZ
+            //a TimeSeries has some ambiguous DateTimes read from excel, though they represent times in TimeSeries.TZ
             //The TimeSeries.TZ is a string olson time "Etc/GMT+8" read from db config
             string tz = "America/Los_Angeles";
             //string tz = "Etc/GMT+8";
