@@ -36,7 +36,7 @@ namespace ExcelToCWMSTests
             {
                 TimeZoneInfo rval = TimeUtilities.OlsonTimeZoneToTimeZoneInfo(zone);
                 DateTime dt = new DateTime(2021, 5, 1, 0,0,0, DateTimeKind.Local);            
-                Console.WriteLine(zone + "---" + rval.Id);
+                Console.WriteLine(zone + "   was converted to   " + rval.Id);
                 Console.WriteLine("Base offset is: " + rval.BaseUtcOffset);
                 Console.WriteLine("Current offset is: " + rval.GetUtcOffset(dt));
                 
