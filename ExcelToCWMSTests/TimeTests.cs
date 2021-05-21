@@ -19,7 +19,20 @@ namespace ExcelToCWMSTests
     /// </summary>
     [TestMethod]
     public void BasicsDateTimeOffset() {
-            // 
+
+            //If we use DateTimeOffset, we would need to use it in tandem with somehting that..
+            //is timezone aware
+        //https://docs.microsoft.com/en-us/dotnet/api/system.datetimeoffset?view=net-5.0
+            //Although a DateTimeOffset value includes an offset,
+            //it is not a fully time zone-aware data structure.
+            //While an offset from UTC is one characteristic of a time zone,
+            //it does not unambiguously identify a time zone.
+            //Not only do multiple time zones share the same offset from UTC,
+            //but the offset of a single time zone changes if it observes daylight saving time.
+            //This means that, as soon as a DateTimeOffset value is disassociated from its time zone,
+            //it can no longer be unambiguously linked back to its original time zone.
+
+
             // CWMS database takes : America/Pacific  as input.
             //  PDT
             /* Brazil/West
@@ -40,7 +53,7 @@ namespace ExcelToCWMSTests
 
 
         }
-    [TestMethod]
+        [TestMethod]
     public void BasicsNodaTime()
     {       //This is an example of how of a db.write case might work
             var dtlist = new List<DateTime>();
