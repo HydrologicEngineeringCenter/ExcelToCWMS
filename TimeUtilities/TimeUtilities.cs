@@ -22,7 +22,6 @@ namespace Hec.Utilities
 
             //Conver To UTC DateTime 
             DateTime utcdt = zdt.ToDateTimeUtc();
-            DateTimeOffset test = zdt.ToDateTimeOffset();
             DateTimeOffset dtOffset = utcdt;
 
             //Then convert to utc java milis since unix
