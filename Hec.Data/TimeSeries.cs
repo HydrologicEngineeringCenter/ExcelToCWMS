@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hec.Utilities;
 
 namespace Hec.Data
 {
@@ -12,7 +13,7 @@ namespace Hec.Data
 
     public string Units { get; set; }
 
-    public TimeZoneInfo TimeZone { get; }
+    public string TimeZone { get; }
 
 
     public double[] Values
@@ -50,9 +51,7 @@ namespace Hec.Data
             var rval = new List<long>();
             foreach (var item in data)
             {
-                DateTimeOffset dtOffset = item.Key;
-                long javamillisC = dtOffset.ToUnixTimeMilliseconds();
-                rval.Add(javamillisC);
+                rval.Add(TimeUtilities.DateTimeAndZoneToUnixMilis(item.Key, TimeZone));
             }
             return rval.ToArray();
 
@@ -62,7 +61,7 @@ namespace Hec.Data
         //https://stackoverflow.com/questions/1376965/when-to-use-a-sortedlisttkey-tvalue-over-a-sorteddictionarytkey-tvalue
         private SortedList<DateTime, TimeSeriesValue> data = new SortedList<DateTime, TimeSeriesValue>();
 
-        public TimeSeries(string id , string units, TimeZoneInfo  tzInfo)
+        public TimeSeries(string id , string units, string  tzInfo)
         {
             this.TSID = id;
             this.Units = units;
@@ -86,7 +85,7 @@ namespace Hec.Data
         {
             Console.WriteLine("TSID = "+TSID);
             Console.WriteLine("Units = " + Units);
-            Console.WriteLine("Timezone = " + TimeZone.DisplayName);
+            Console.WriteLine("Timezone = " + TimeZone);
             foreach (var item in data)
             {
                 Console.WriteLine("{0:dd-MMM-yyyy HHmm}{1,10:f3}{2,8:d}", item.Key, item.Value.Value, item.Value.Quality);

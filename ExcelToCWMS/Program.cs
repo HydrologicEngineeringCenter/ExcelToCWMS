@@ -35,12 +35,17 @@ namespace ExcelToCWMS
             var cr = new ConfigReader(dbconfig);
 
             Console.WriteLine("UTC  Offset from config = "+ cr.CRead("timezone"));
-            TimeZoneInfo tzInfo = TimeUtilities.OlsonTimeZoneToTimeZoneInfo(cr.CRead("timezone"));
+            string IANA_timezone = cr.CRead("timezone");
+
+            TestSave(dbconfig);
 
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
 
-            TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime ,tzInfo);
+            TestPrint(db);
+            
+
+            TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime ,IANA_timezone);
             foreach (TimeSeries ts in tsArrays)
             {
                 db.WriteTimeSeries(ts);
@@ -52,17 +57,22 @@ namespace ExcelToCWMS
 
         private static void TestSave(string dbconfig)
         {
-            string id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
-            TimeSeries ts = new TimeSeries(id, "mm", TimeUtilities.OlsonTimeZoneToTimeZoneInfo("America/Chicago"));
-            ts.Add(new DateTime(2000, 1, 1), 123, 0);
-            ts.Add(new DateTime(2000, 1, 2), 456, 1);
             var cr = new ConfigReader(dbconfig);
+            string id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
+            TimeSeries ts = new TimeSeries(id, "mm","America/Los_Angeles");
+            ts.Add(new DateTime(1990, 3, 25), 123, 0);
+            ts.Add(new DateTime(1990, 3, 26), 456, 0);         
+            ts.Add(new DateTime(1990, 3, 27), 789, 0);
+            ts.Add(new DateTime(1990, 4, 3), 123, 0);
+            ts.Add(new DateTime(1990, 4, 4), 456, 0);
+            ts.Add(new DateTime(1990, 4, 5), 789, 0);
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
 
             db.WriteTimeSeries(ts);
+            ts.WriteToConsole();
 
-            var ts2 = db.ReadTimeSeries(id, DateTime.Now.AddDays(-2), DateTime.Now,cr.CRead("timezone"));
+            var ts2 = db.ReadTimeSeries(id, new DateTime(1990, 3, 25), new DateTime(1990, 4, 5), "UTC");
             ts2.WriteToConsole();
         }
 

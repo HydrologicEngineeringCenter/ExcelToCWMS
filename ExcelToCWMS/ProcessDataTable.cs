@@ -9,7 +9,7 @@ namespace ExcelToCWMS
 {
     public class ProcessDataTable
     {
-        public static TimeSeries[] GetTimeSeriesFromExcel(string filename, string sheetName, DateTime startTime, DateTime endTime, TimeZoneInfo tzInfo)
+        public static TimeSeries[] GetTimeSeriesFromExcel(string filename, string sheetName, DateTime startTime, DateTime endTime, string IANA_timezone)
         {
             ClosedXML c = new ClosedXML(filename);
             DataTable dt = c.GetDataTable(sheetName);
@@ -20,7 +20,7 @@ namespace ExcelToCWMS
                 if (dc.ColumnName.ToLower() == "date") continue;
                 string header = dc.ColumnName;
                 ParseHeader(header, out string id, out string units);
-                tsDict.Add(header, new TimeSeries(id, units, tzInfo));
+                tsDict.Add(header, new TimeSeries(id, units, IANA_timezone));
             }
             //https://www.c-sharpcorner.com/blogs/filter-datetime-from-datatable-in-c-sharp1
 

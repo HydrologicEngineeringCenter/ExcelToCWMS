@@ -102,16 +102,16 @@ namespace Hec.Cwms
         /// <param name="tsid"></param>
         /// <param name="t1"></param>
         /// <param name="t2"></param>
-        /// <param name="olson_time_zone"> this is the Olson time zone</param>
+        /// <param name="IANA_timezone"> this is the IANA time zone id</param>
         /// <returns>Hec.Data.TimeSeries</returns>
-        public TimeSeries ReadTimeSeries(string tsid, DateTime t1, DateTime t2, string olson_time_zone)
+        public TimeSeries ReadTimeSeries(string tsid, DateTime t1, DateTime t2, string IANA_timezone)
     {
       //01-JAN-1980 1530
       string fmt = "dd-MMM-yyyy HHmm";
       string start_time = t1.ToString(fmt);
       string end_time = t2.ToString(fmt);
       string units = ChangeMetricToEnglish(LookupUnits(tsid));
-      TimeSeries rval = new TimeSeries(tsid, units, TimeUtilities.OlsonTimeZoneToTimeZoneInfo(olson_time_zone));
+      TimeSeries rval = new TimeSeries(tsid, units, IANA_timezone);
       OracleConnection conn = oracle.GetConnection();
       OracleCommand cmd = new OracleCommand();
       cmd.Connection = conn;
@@ -177,7 +177,7 @@ namespace Hec.Cwms
               "time_zone",
               OracleDbType.Varchar2,
               24,
-              olson_time_zone,
+              IANA_timezone,
               ParameterDirection.Input));
             cmd.ExecuteNonQuery();
       ts_cur = (OracleRefCursor)cmd.Parameters["ts_cur"].Value;

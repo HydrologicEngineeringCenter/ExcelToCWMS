@@ -32,7 +32,6 @@ namespace ExcelToCWMSTests
             //This means that, as soon as a DateTimeOffset value is disassociated from its time zone,
             //it can no longer be unambiguously linked back to its original time zone.
 
-
             // CWMS database takes : America/Pacific  as input.
             //  PDT
             /* Brazil/West
@@ -101,7 +100,7 @@ namespace ExcelToCWMSTests
         public void ToUnixTimeMilisecondTest()
         {
             string id = "ACIA.Flow.Inst.1Hour.0.Best-NWDM";
-            TimeSeries ts = new TimeSeries(id, "CFS", TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"));
+            TimeSeries ts = new TimeSeries(id, "CFS", "America/Chicago");
             ts.Add(new DateTime(2021, 5, 1), 123, 0);
             ts.Add(new DateTime(2021, 5, 2), 456, 0);
             ts.Add(new DateTime(2021, 5, 3), 789, 0);
