@@ -13,13 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelToCWMSTests", "ExcelTo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hec.Utilities", "TimeUtilities\Hec.Utilities.csproj", "{7F5FBC07-D756-475A-9DEA-348E1358ACB9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Setup", "Setup", "{C730DCB7-A8BB-440B-84F9-29C1DA84AEE8}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\Desktop\ExcelToCWMSBeta\setup\db.config = ..\..\..\Desktop\ExcelToCWMSBeta\setup\db.config
-		..\..\..\Desktop\ExcelToCWMSBeta\setup\Example.bat = ..\..\..\Desktop\ExcelToCWMSBeta\setup\Example.bat
-		..\..\..\Desktop\ExcelToCWMSBeta\setup\input.xlsx = ..\..\..\Desktop\ExcelToCWMSBeta\setup\input.xlsx
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
