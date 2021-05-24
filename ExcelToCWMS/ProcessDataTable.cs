@@ -36,6 +36,11 @@ namespace ExcelToCWMS
                 foreach (string header in tsDict.Keys)
                 {
                     string value = row.Field<string>(header);
+                    if(value == "")
+                    {
+                        Console.WriteLine("No Value Found For: --" + header + "  at -- " + t + "   in Excel sheet");
+                        continue;
+                    }
                     if (!double.TryParse(value, out double dval))
                     {
                         throw new Exception("Could not convert " + value + "to double ");
