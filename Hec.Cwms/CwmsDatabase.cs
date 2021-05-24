@@ -177,7 +177,7 @@ namespace Hec.Cwms
               "time_zone",
               OracleDbType.Varchar2,
               24,
-              IANA_timezone,
+              "!"+IANA_timezone,
               ParameterDirection.Input));
             cmd.ExecuteNonQuery();
       ts_cur = (OracleRefCursor)cmd.Parameters["ts_cur"].Value;
