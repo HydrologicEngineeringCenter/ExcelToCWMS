@@ -37,12 +37,9 @@ namespace ExcelToCWMS
             Console.WriteLine("UTC  Offset from config = "+ cr.CRead("timezone"));
             string IANA_timezone = cr.CRead("timezone");
 
-            TestSave(dbconfig);
 
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
-
-            TestPrint(db);
             
 
             TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime ,IANA_timezone);
