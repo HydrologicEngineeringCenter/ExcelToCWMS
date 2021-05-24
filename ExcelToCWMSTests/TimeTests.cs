@@ -51,9 +51,11 @@ namespace ExcelToCWMSTests
 
 
 
-        }
+        }/// <summary>
+        /// Discovery test to see how NodaTime works, and how we can use it. 
+        /// </summary>
         [TestMethod]
-    public void BasicsNodaTime()
+    public void BasicsNodaTimeTesing()
     {       //This is an example of how of a db.write case might work
             var dtlist = new List<DateTime>();
             //a TimeSeries has some ambiguous DateTimes read from excel, though they represent times in TimeSeries.TZ
@@ -95,7 +97,9 @@ namespace ExcelToCWMSTests
 
 
         }
-
+        /// <summary>
+        /// Test to check if input DateTIme and zone is converted to unix milis as expected
+        /// </summary>
     [TestMethod]
         public void ToUnixTimeMilisecondTest()
         {
@@ -114,23 +118,6 @@ namespace ExcelToCWMSTests
                 var dto = DateTimeOffset.FromUnixTimeMilliseconds(i).UtcDateTime;
                 Console.WriteLine(dto);
             }
-        }
-        [TestMethod]
-        public void OlsonConverterTest()
-        {
-           string[] zones = { "America/Los_Angeles", "America/Denver", "America/Chicago", "America/New_York" };
-            foreach (string zone in zones)
-            {
-                TimeZoneInfo rval = TimeUtilities.OlsonTimeZoneToTimeZoneInfo(zone);
-                DateTime dt = new DateTime(2021, 5, 1, 0,0,0, DateTimeKind.Local);            
-                Console.WriteLine(zone + "   was converted to   " + rval.Id);
-                Console.WriteLine("Base offset is: " + rval.BaseUtcOffset);
-                Console.WriteLine("Current offset is: " + rval.GetUtcOffset(dt));
-                
-
-            }
-
-
         }
     }
 }

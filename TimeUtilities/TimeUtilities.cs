@@ -28,5 +28,16 @@ namespace Hec.Utilities
             return dtOffset.ToUnixTimeMilliseconds();
 
         }
+        public static DateTime DateTimAndZoneToNewDateTime(DateTime dt1, string IANA_timezone)
+        {
+            DateTimeZone zone = DateTimeZoneProviders.Tzdb[IANA_timezone];
+            //Convert to ambiguous DateTime to ambiguous noda time
+            LocalDateTime ldt = LocalDateTime.FromDateTime(dt1);
+
+            //Convert to unambiguous noda time in the TimeSeries.TZ timezone
+            ZonedDateTime zdt = zone.AtStrictly(ldt);
+
+            return zdt.ToDateTimeUnspecified();
+        }
     }
 }
