@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hec.Data", "Hec.Data\Hec.Da
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelToCWMSTests", "ExcelToCWMSTests\ExcelToCWMSTests.csproj", "{815D9C1F-1064-46D0-8D7A-DF243FE12EA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hec.Utilities", "TimeUtilities\Hec.Utilities.csproj", "{7F5FBC07-D756-475A-9DEA-348E1358ACB9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
