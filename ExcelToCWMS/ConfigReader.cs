@@ -18,6 +18,8 @@ namespace ExcelToCWMS
             m_dict = new Dictionary<string, string>();
             foreach (var item in lines)
             {
+                if (item.StartsWith("#"))
+                    continue;
                 var tokens = item.Split(':');
                 if (tokens.Length == 2)
                 {

@@ -40,5 +40,11 @@
     <Compile Include="TimeSeries.cs" />
     <Compile Include="TimeSeriesValue.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TimeUtilities\Hec.Utilities.csproj">
+      <Project>{7f5fbc07-d756-475a-9dea-348e1358acb9}</Project>
+      <Name>Hec.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
