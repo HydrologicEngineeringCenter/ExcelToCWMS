@@ -1,6 +1,7 @@
 ﻿using Hec.Cwms;
 using Hec.Data;
 using System;
+using Hec.Utilities;
 
 namespace ExcelToCWMS
 {
@@ -32,14 +33,20 @@ namespace ExcelToCWMS
             DateTime startTime = endTime.AddDays(-lookBackDays);
             
             var cr = new ConfigReader(dbconfig);
+
+            Console.WriteLine("UTC  Offset from config = "+ cr.CRead("timezone"));
+            string IANA_timezone = cr.CRead("timezone");
+
+
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
+            
 
-            TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime);
+            TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime ,IANA_timezone);
             foreach (TimeSeries ts in tsArrays)
             {
                 db.WriteTimeSeries(ts);
-                db.ReadTimeSeries(ts.TSID, startTime, endTime).WriteToConsole();
+                db.ReadTimeSeries(ts.TSID, startTime, endTime, cr.CRead("timezone")).WriteToConsole();
             }
             Console.Read();
         }
@@ -47,27 +54,34 @@ namespace ExcelToCWMS
 
         private static void TestSave(string dbconfig)
         {
-            string id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
-            TimeSeries ts = new TimeSeries(id);
-            ts.Add(new DateTime(2000, 1, 1), 123, 0);
-            ts.Add(new DateTime(2000, 1, 2), 456, 1);
-            ts.Units = "mm";
             var cr = new ConfigReader(dbconfig);
+            string id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
+            TimeSeries ts = new TimeSeries(id, "mm","America/Los_Angeles");
+            ts.Add(new DateTime(1990, 3, 25), 123, 0);
+            ts.Add(new DateTime(1990, 3, 26), 456, 0);         
+            ts.Add(new DateTime(1990, 3, 27), 789, 0);
+            ts.Add(new DateTime(1990, 4, 3), 123, 0);
+            ts.Add(new DateTime(1990, 4, 4), 456, 0);
+            ts.Add(new DateTime(1990, 4, 5), 789, 0);
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
 
-            var ts2 = db.ReadTimeSeries(id, DateTime.Now.AddDays(-2), DateTime.Now);
-            ts2.WriteToConsole();
-
             db.WriteTimeSeries(ts);
+            ts.WriteToConsole();
+
+            var ts2 = db.ReadTimeSeries(id, new DateTime(1990, 3, 25), new DateTime(1990, 4, 5), "UTC");
+            ts2.WriteToConsole();
         }
 
         private static void TestPrint(CwmsDatabase db)
         {
             var id = "ACIA.Flow.Inst.1Hour.0.Best-NWDM";
             ///var id = "ABSD.Precip.Inst.15Minutes.0.Raw-LRGS";
-            TimeSeries ts = db.ReadTimeSeries(id, DateTime.Now.AddHours(-56), DateTime.Now);
+            TimeSeries ts = db.ReadTimeSeries(id, DateTime.Now.AddHours(-56), DateTime.Now, "America/Los_Angeles");
             ts.WriteToConsole();
+            TimeSeries ts2 = db.ReadTimeSeries(id, DateTime.Now.AddHours(-56), DateTime.Now, "UTC");
+            ts2.WriteToConsole();
+
         }
     }
 }

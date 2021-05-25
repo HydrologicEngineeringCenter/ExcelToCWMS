@@ -3,6 +3,8 @@ using Oracle.ManagedDataAccess.Types;
 using System;
 using Hec.Data;
 using System.Data;
+using Hec.Utilities;
+
 
 namespace Hec.Cwms
 {
@@ -92,15 +94,24 @@ namespace Hec.Cwms
             }
             return "";
         }
-
-    public TimeSeries ReadTimeSeries(string tsid, DateTime t1, DateTime t2)
+        /// <summary>
+        /// Retrieves a time series from oracle and returns a Hec.Data.TimeSeries
+        /// Keep in mind that CST and MST are broken in Java (they follow DST and shouldn't). 
+        /// However, the  cwms_ts.retrieve_ts call has logic to handle that and returns constant offsets for them.
+        /// </summary>
+        /// <param name="tsid"></param>
+        /// <param name="t1"></param>
+        /// <param name="t2"></param>
+        /// <param name="IANA_timezone"> this is the IANA time zone id</param>
+        /// <returns>Hec.Data.TimeSeries</returns>
+        public TimeSeries ReadTimeSeries(string tsid, DateTime t1, DateTime t2, string IANA_timezone)
     {
       //01-JAN-1980 1530
       string fmt = "dd-MMM-yyyy HHmm";
       string start_time = t1.ToString(fmt);
       string end_time = t2.ToString(fmt);
       string units = ChangeMetricToEnglish(LookupUnits(tsid));
-      TimeSeries rval = new TimeSeries(tsid, units);
+      TimeSeries rval = new TimeSeries(tsid, units, IANA_timezone);
       OracleConnection conn = oracle.GetConnection();
       OracleCommand cmd = new OracleCommand();
       cmd.Connection = conn;
@@ -122,7 +133,7 @@ namespace Hec.Cwms
      "    :units, " +
      "    to_date(:start_time, 'dd-mon-yyyy hh24mi'), " +
      "    to_date(:end_time,   'dd-mon-yyyy hh24mi'), " +
-     "    'UTC');" +
+     "    :time_zone);" +
      "end;";
       cmd.CommandType = CommandType.Text;
       OracleRefCursor ts_cur = null;
@@ -161,7 +172,14 @@ namespace Hec.Cwms
               16,
               end_time,
               ParameterDirection.Input));
-      cmd.ExecuteNonQuery();
+      cmd.Parameters.Add(
+          new OracleParameter(
+              "time_zone",
+              OracleDbType.Varchar2,
+              24,
+              "!"+IANA_timezone,
+              ParameterDirection.Input));
+            cmd.ExecuteNonQuery();
       ts_cur = (OracleRefCursor)cmd.Parameters["ts_cur"].Value;
       var dr = ts_cur.GetDataReader();
 
@@ -215,7 +233,7 @@ namespace Hec.Cwms
       cmd.Parameters.Add("p_cwms_ts_id", ts.TSID);
       cmd.Parameters.Add("p_units", ts.Units);
 
-      var op = new OracleParameter("p_times", ts.TimesAsJavaMilliSeconds());
+      var op = new OracleParameter("p_times", ts.ToUnixMillisUTC());
       //op.OracleDbType = OracleDbType.Long;
       //op.Size = ts.TimesAsJavaMilliSeconds().Length;
       op.CollectionType = OracleCollectionType.PLSQLAssociativeArray;

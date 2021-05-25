@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hec.Utilities;
 
 namespace Hec.Data
 {
@@ -11,6 +12,9 @@ namespace Hec.Data
     public string TSID { get; set; }
 
     public string Units { get; set; }
+
+    public string TimeZone { get; }
+
 
     public double[] Values
     {
@@ -36,39 +40,32 @@ namespace Hec.Data
         return rval.ToArray();
       }
     }
-    public long[] TimesAsJavaMilliSeconds()
-    {
-        var rval = new List<long>();
-        foreach (var item in data)
+        /// <summary>
+        /// Converts each DateTime of TimeSeries to miliseconds since unix epoch
+        ///Note that the ToUnixTimeMiliseconds() method converts the current instance to UTC before returning the number of milliseconds
+        /// https://docs.microsoft.com/en-us/dotnet/api/system.datetimeoffset.tounixtimemilliseconds?view=net-5.0https://docs.microsoft.com/en-us/dotnet/api/system.datetimeoffset.tounixtimemilliseconds?view=net-5.0
+        /// </summary>
+        /// <returns>array of longs representing miliseconds since the unix epoch</returns>
+        public long[] ToUnixMillisUTC()
         {
-          rval.Add(ToMillisecondsSinceUnixEpoch(item.Key));
+            var rval = new List<long>();
+            foreach (var item in data)
+            {
+                rval.Add(TimeUtilities.DateTimeAndZoneToUnixMilis(item.Key, TimeZone));
+            }
+            return rval.ToArray();
+
         }
-        return rval.ToArray();
-    }
-
-    private static DateTime UnixEpoch()
-    {
-      return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-    }
-
-    /// <summary>
-    /// https://stackoverflow.com/questions/50485294/pass-integer-array-to-oracle-procedure-by-c-sharp
-    /// </summary>
-    /// <param name="dateTime"></param>
-    /// <returns></returns>
-    private static long ToMillisecondsSinceUnixEpoch(DateTime dateTime)
-    {
-      return (long)(dateTime - UnixEpoch()).TotalMilliseconds;
-    }
 
         //SortedList is faster than SortedDictionary if inputing data in sorted order
         //https://stackoverflow.com/questions/1376965/when-to-use-a-sortedlisttkey-tvalue-over-a-sorteddictionarytkey-tvalue
         private SortedList<DateTime, TimeSeriesValue> data = new SortedList<DateTime, TimeSeriesValue>();
 
-        public TimeSeries(string id="", string units="")
+        public TimeSeries(string id , string units, string  tzInfo)
         {
             this.TSID = id;
             this.Units = units;
+            this.TimeZone = tzInfo;
         }
 
         public TimeSeriesValue this[DateTime t]
@@ -88,6 +85,7 @@ namespace Hec.Data
         {
             Console.WriteLine("TSID = "+TSID);
             Console.WriteLine("Units = " + Units);
+            Console.WriteLine("Timezone = " + TimeZone);
             foreach (var item in data)
             {
                 Console.WriteLine("{0:dd-MMM-yyyy HHmm}{1,10:f3}{2,8:d}", item.Key, item.Value.Value, item.Value.Quality);
