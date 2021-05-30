@@ -29,25 +29,31 @@ namespace ExcelToCWMS
             String filename = args[1];
             String sheetName = args[2];
             DateTime endTime = DateTime.Parse(args[3]);
+            
             int lookBackDays = int.Parse(args[4]);
             DateTime startTime = endTime.AddDays(-lookBackDays);
-            
+
+            if (endTime.TimeOfDay == TimeSpan.Parse("00:00:00"))
+            {
+                endTime= endTime.AddHours(23);
+            }
+
             var cr = new ConfigReader(dbconfig);
 
-            Console.WriteLine("UTC  Offset from config = "+ cr.CRead("timezone"));
+            Console.WriteLine("Timezone read from config:  "+ cr.CRead("timezone"));
             string IANA_timezone = cr.CRead("timezone");
-
 
             Oracle o = Oracle.Connect(cr.CRead("user"), cr.CRead("host"), cr.CRead("sid"), cr.CRead("port"));
             CwmsDatabase db = new CwmsDatabase(o, cr.CRead("officeid"));
             
-
+           
             TimeSeries[] tsArrays = ProcessDataTable.GetTimeSeriesFromExcel(filename, sheetName, startTime, endTime ,IANA_timezone);
             foreach (TimeSeries ts in tsArrays)
             {
                 db.WriteTimeSeries(ts);
                 db.ReadTimeSeries(ts.TSID, startTime, endTime, cr.CRead("timezone")).WriteToConsole();
             }
+            Console.WriteLine("Store Complete. Press any key to exit . . . ");
             Console.Read();
         }
 
