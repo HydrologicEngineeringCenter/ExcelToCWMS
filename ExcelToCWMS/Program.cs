@@ -35,7 +35,7 @@ namespace ExcelToCWMS
 
             if (endTime.TimeOfDay == TimeSpan.Parse("00:00:00"))
             {
-                endTime= endTime.AddHours(23);
+                endTime= endTime.AddHours(24);
             }
 
             var cr = new ConfigReader(dbconfig);
