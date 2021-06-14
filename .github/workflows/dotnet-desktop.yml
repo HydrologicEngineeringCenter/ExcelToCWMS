@@ -12,10 +12,10 @@ jobs:
       name: Checkout Code
      
     - name: Setup MSBuild Path
-      uses: microsoft/setup-msbuild@v1.0.2 #warrenbuckley/Setup-MSBuild@v1
+      uses: microsoft/setup-msbuild@v1.0.2 
        
     - name: Setup NuGet
-      uses: nuget/setup-nuget@v1 #NuGet/setup-nuget@v1.0.2
+      uses: nuget/setup-nuget@v1 
      
     - name: Restore NuGet Packages
       run: nuget restore ExcelToCWMS.sln
