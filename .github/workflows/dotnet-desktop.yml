@@ -13,6 +13,9 @@ jobs:
      
     - name: Setup MSBuild Path
       uses: microsoft/setup-msbuild@v1.0.2 
+      
+#    - name: Setup VSTest.exe
+#      uses: Malcolmnixon/Setup-VSTest@v4
        
     - name: Setup NuGet
       uses: nuget/setup-nuget@v1 
@@ -22,6 +25,9 @@ jobs:
  
     - name: Build 
       run: msbuild ExcelToCWMS.sln   #/p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+      
+    - name:  Run Tests
+      run: vstest.console ExcelToCWMSTests\bin\Debug\ExcelToCWMSTests.dll
  
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
