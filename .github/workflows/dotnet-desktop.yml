@@ -14,8 +14,8 @@ jobs:
     - name: Setup MSBuild Path
       uses: microsoft/setup-msbuild@v1.0.2 
       
-#    - name: Setup VSTest.exe
-#      uses: Malcolmnixon/Setup-VSTest@v4
+    - name: Setup VSTest.exe
+      uses: Malcolmnixon/Setup-VSTest@v4
        
     - name: Setup NuGet
       uses: nuget/setup-nuget@v1 
