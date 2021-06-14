@@ -26,6 +26,7 @@ namespace ExcelToCWMS.Tests
         public void GetTSStartTimeTest()
         {
             DateTime t1 = DateTime.Parse("2021-11-01 07:00");
+
             DateTime t2 = DateTime.Parse("2021-11-21 07:00");
 
             var TimeSeriesArray = ProcessDataTable.GetTimeSeriesFromExcel("input.xlsx", "import", t1, t2, "America/Los_Angeles");
