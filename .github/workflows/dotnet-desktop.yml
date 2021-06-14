@@ -24,9 +24,11 @@ jobs:
       run: msbuild ExcelToCWMS.sln   #/p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
  
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.3
+      uses: actions/upload-artifact@v2
       with:
         name: excel-to-cwms
-        path: ExcelToCWMS/bin/Debug/
+        path: |
+          ExcelToCWMS/bin/Debug/
+          setup/
         if-no-files-found: error
         retention-days: 90
